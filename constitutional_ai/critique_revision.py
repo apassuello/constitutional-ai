@@ -435,7 +435,8 @@ def critique_revision_pipeline(
                         f"  Score: {initial_weighted_score:.2f} → {revised_weighted_score:.2f}",
                         silent=True,
                     )
-        except (RuntimeError, ValueError, TypeError) as e:
+        except Exception as e:
+            # Catch all exceptions to ensure graceful degradation
             if logger:
                 logger.log_stage("TRAINING-EXAMPLE-ERROR", f"Failed: {e}")
             _logger.info(f"Warning: Failed to process prompt '{prompt[:50]}...': {e}")

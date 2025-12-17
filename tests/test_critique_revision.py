@@ -204,10 +204,14 @@ class TestCritiqueRevisionPipeline:
             num_revisions=1,
         )
 
-        assert len(result) == 1
-        assert result[0]["prompt"] == "Test prompt"
-        assert result[0]["response"] == "Revised response"
-        assert result[0]["num_revisions"] == 1
+        # Pipeline now returns a dict with training_data, preference_pairs, and stats
+        assert "training_data" in result
+        assert "preference_pairs" in result
+        assert "stats" in result
+        assert len(result["training_data"]) == 1
+        assert result["training_data"][0]["prompt"] == "Test prompt"
+        assert result["training_data"][0]["response"] == "Revised response"
+        assert result["training_data"][0]["num_revisions"] == 1
 
     @patch("constitutional_ai.critique_revision.generate_critique")
     @patch("constitutional_ai.critique_revision.generate_revision")
@@ -227,8 +231,8 @@ class TestCritiqueRevisionPipeline:
             num_revisions=2,
         )
 
-        assert len(result) == 1
-        assert result[0]["response"] == "Revision 2"
+        assert len(result["training_data"]) == 1
+        assert result["training_data"][0]["response"] == "Revision 2"
         assert mock_gen_crit.call_count == 2
         assert mock_gen_rev.call_count == 2
 
@@ -245,7 +249,11 @@ class TestCritiqueRevisionPipeline:
             device=self.device,
         )
 
-        assert len(result) == 0  # Failed prompt should not be included
+        # When all prompts fail, training_data should be empty
+        assert len(result["training_data"]) == 0
+        assert len(result["preference_pairs"]) == 0
+        assert result["stats"]["training_examples"] == 0
+        assert result["stats"]["skipped"] == 1
 
 
 class TestConstitutionalDataset:

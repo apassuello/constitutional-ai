@@ -298,7 +298,7 @@ class ConstitutionalPipeline:
         logger.info(f"Processing {len(prompts)} prompts with {num_revisions} revisions each")
 
         # Generate training data with critiques and revisions
-        training_data = critique_revision_pipeline(
+        pipeline_result = critique_revision_pipeline(
             prompts=prompts,
             model=self.base_model,
             tokenizer=self.tokenizer,
@@ -306,6 +306,9 @@ class ConstitutionalPipeline:
             device=self.device,
             num_revisions=num_revisions,
         )
+
+        # Extract training data from pipeline result
+        training_data = pipeline_result["training_data"]
 
         self.stats["phase1_samples_processed"] = len(training_data)
         self.stats["phase1_revisions_generated"] = len(training_data) * num_revisions
