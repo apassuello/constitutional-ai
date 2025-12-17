@@ -2,8 +2,8 @@
 """
 Constitutional AI - Setup Script
 
-A Python library for implementing Constitutional AI principles for
-evaluating and training language models.
+A research implementation of Constitutional AI methodology for
+educational and experimental purposes.
 """
 
 from pathlib import Path
@@ -27,16 +27,17 @@ else:
 
 setup(
     name="constitutional-ai",
-    version="0.1.0",
+    version="0.1.0-alpha",
     author="Your Name",
     author_email="your.email@example.com",
-    description="A Python library for implementing Constitutional AI",
+    description="Research implementation of Constitutional AI methodology",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/constitutional-ai",
+    url="https://github.com/yourusername/constitutional-ai",  # Update with actual URL
     packages=find_packages(exclude=["tests*", "demos*", "examples*", "docs*"]),
     classifiers=[
         "Development Status :: 3 - Alpha",
+        "Intended Audience :: Education",
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: Apache Software License",
