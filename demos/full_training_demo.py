@@ -149,7 +149,7 @@ def phase_1_supervised_learning(
     logger.info("\n[3/5] Generating critiques...")
     critiques = []
 
-    for i, (prompt, response) in enumerate(zip(prompts, original_responses)):
+    for i, (prompt, response) in enumerate(zip(prompts, original_responses, strict=True)):
         logger.info(f"  Critiquing response {i+1}/{len(prompts)}...")
         critique = generate_critique(
             prompt=prompt,
@@ -167,7 +167,9 @@ def phase_1_supervised_learning(
     logger.info("\n[4/5] Generating revisions...")
     revised_responses = []
 
-    for i, (prompt, response, critique) in enumerate(zip(prompts, original_responses, critiques)):
+    for i, (prompt, response, critique) in enumerate(
+        zip(prompts, original_responses, critiques, strict=True)
+    ):
         logger.info(f"  Revising response {i+1}/{len(prompts)}...")
         revision = generate_revision(
             prompt=prompt,

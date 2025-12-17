@@ -49,7 +49,9 @@ def load_model(
     try:
         from transformers import AutoModelForCausalLM, AutoTokenizer
     except ImportError:
-        raise ImportError("transformers library required. Install with: pip install transformers")
+        raise ImportError(
+            "transformers library required. Install with: pip install transformers"
+        ) from None
 
     if device is None:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

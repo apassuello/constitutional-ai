@@ -504,7 +504,7 @@ class TestEdgeCases:
 
     def test_empty_training_data(self, reward_model, tokenizer, device):
         """Test handling of empty training data."""
-        with pytest.raises(Exception):
+        with pytest.raises((ValueError, RuntimeError)):
             train_reward_model(
                 reward_model=reward_model,
                 training_data=[],

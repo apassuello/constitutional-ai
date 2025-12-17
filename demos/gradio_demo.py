@@ -248,7 +248,7 @@ def visualize_comparison(
     )
 
     if all_principles:
-        principles = sorted(list(all_principles))
+        principles = sorted(all_principles)
         baseline_violations = [
             baseline_metrics.get("principle_violations", {}).get(p, 0) for p in principles
         ]

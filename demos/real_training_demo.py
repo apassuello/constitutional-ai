@@ -197,7 +197,7 @@ def visualize_comparison(
     )
 
     if all_principles:
-        principles = sorted(list(all_principles))
+        principles = sorted(all_principles)
         baseline_violations = [
             baseline_metrics.get("principle_violations", {}).get(p, 0) for p in principles
         ]
@@ -314,7 +314,7 @@ def visualize_comparison(
         fontsize=11,
         verticalalignment="center",
         family="monospace",
-        bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.3),
+        bbox={"boxstyle": "round", "facecolor": "wheat", "alpha": 0.3},
     )
 
     plt.savefig(save_path, dpi=300, bbox_inches="tight")

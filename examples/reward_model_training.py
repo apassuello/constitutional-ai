@@ -100,7 +100,9 @@ def main():
     )
 
     print("\n   Training Results:")
-    for epoch, loss, acc in zip(metrics["epochs"], metrics["losses"], metrics["accuracy"]):
+    for epoch, loss, acc in zip(
+        metrics["epochs"], metrics["losses"], metrics["accuracy"], strict=True
+    ):
         print(f"   Epoch {epoch}: Loss = {loss:.4f}, Accuracy = {acc:.4f}")
 
     # Test the trained reward model
@@ -116,8 +118,15 @@ def main():
     rewards_bad = reward_model.get_rewards(test_prompts, test_responses_bad, tokenizer, device)
 
     print("\n   Test Results:")
-    for i, (prompt, good, bad, r_good, r_bad) in enumerate(
-        zip(test_prompts, test_responses_good, test_responses_bad, rewards_good, rewards_bad)
+    for i, (prompt, _good, _bad, r_good, r_bad) in enumerate(
+        zip(
+            test_prompts,
+            test_responses_good,
+            test_responses_bad,
+            rewards_good,
+            rewards_bad,
+            strict=True,
+        )
     ):
         print(f"\n   Example {i+1}:")
         print(f"     Prompt: {prompt}")
