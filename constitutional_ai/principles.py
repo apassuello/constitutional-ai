@@ -12,10 +12,8 @@ SPECIAL NOTES: Implements four core constitutional principles from Constitutiona
              evaluation (fast, no model required) for backward compatibility.
 """
 
-import re
-
 import logging
-
+import re
 
 _module_logger = logging.getLogger(__name__)
 import json
@@ -26,7 +24,6 @@ from transformers import PreTrainedModel, PreTrainedTokenizer
 
 from .framework import ConstitutionalFramework, ConstitutionalPrinciple
 from .model_utils import GenerationConfig, generate_text
-
 
 # =============================================================================
 # DEBUG CONFIGURATION
@@ -401,7 +398,9 @@ def _parse_json_response(response: str, default_structure: Dict[str, Any]) -> Di
                 if key not in parsed:
                     parsed[key] = default_structure[key]
 
-            _debug_print(f"✓ Parsed: flagged={parsed.get('flagged', 'N/A')}", level=3, prefix="JSON")
+            _debug_print(
+                f"✓ Parsed: flagged={parsed.get('flagged', 'N/A')}", level=3, prefix="JSON"
+            )
             return parsed
         else:
             _debug_print("✗ No JSON found, using defaults", level=2, prefix="JSON")
@@ -666,7 +665,10 @@ def analyze_potential_consequences(text: str) -> str:
 
     if "break into" in text_lower or "breaking into" in text_lower:
         # Check if it's a system/computer vs physical property
-        if any(target in text_lower for target in ["system", "computer", "network", "database", "server", "account"]):
+        if any(
+            target in text_lower
+            for target in ["system", "computer", "network", "database", "server", "account"]
+        ):
             return "unauthorized access"
         else:
             return "Could enable unauthorized entry or burglary"
@@ -677,7 +679,20 @@ def analyze_potential_consequences(text: str) -> str:
 
     # Category 3: Cybercrime
     if any(word in text_lower for word in ["hack", "crack", "bypass"]):
-        if any(target in text_lower for target in ["password", "security", "system", "account", "computer", "network", "database", "server", "website"]):
+        if any(
+            target in text_lower
+            for target in [
+                "password",
+                "security",
+                "system",
+                "account",
+                "computer",
+                "network",
+                "database",
+                "server",
+                "website",
+            ]
+        ):
             return "unauthorized access"
 
     if any(

@@ -9,13 +9,11 @@ SPECIAL NOTES: Implements scalable AI feedback for model fine-tuning by combinin
 constitutional evaluation with PPO-based reinforcement learning
 """
 
+import logging
 from typing import Any, Dict, List
 
 import torch
 import torch.nn as nn
-
-import logging
-
 
 logger = logging.getLogger(__name__)
 import numpy as np

@@ -18,16 +18,14 @@ Requirements:
 
 import argparse
 import json
-import torch
-from pathlib import Path
-from typing import List, Dict
 import logging
+from pathlib import Path
+from typing import List
+
+import torch
 
 # Setup logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -38,10 +36,10 @@ def setup_environment():
     logger.info("=" * 80)
 
     # Check CUDA availability
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     logger.info(f"Using device: {device}")
 
-    if device.type == 'cuda':
+    if device.type == "cuda":
         logger.info(f"GPU: {torch.cuda.get_device_name(0)}")
         logger.info(f"Memory: {torch.cuda.get_device_properties(0).total_memory / 1e9:.2f} GB")
 
@@ -74,7 +72,7 @@ def load_or_generate_prompts(num_prompts: int = 50, quick_test: bool = False) ->
         logger.info(f"Loading prompts from {prompts_file}")
         with open(prompts_file) as f:
             data = json.load(f)
-            prompts = data.get('prompts', [])[:num_prompts]
+            prompts = data.get("prompts", [])[:num_prompts]
         logger.info(f"Loaded {len(prompts)} prompts")
     else:
         logger.info("No prompts file found, using sample prompts")
@@ -106,7 +104,7 @@ def phase_1_supervised_learning(
     device: torch.device,
     model_name: str = "gpt2",
     num_epochs: int = 3,
-    save_dir: str = "outputs/phase1"
+    save_dir: str = "outputs/phase1",
 ) -> str:
     """
     Phase 1: Supervised Learning from AI Feedback (Critique-Revision).
@@ -125,14 +123,8 @@ def phase_1_supervised_learning(
     logger.info("PHASE 1: SUPERVISED LEARNING FROM AI FEEDBACK")
     logger.info("=" * 80)
 
-    from constitutional_ai import (
-        setup_default_framework,
-        generate_critique,
-        generate_revision
-    )
-    from constitutional_ai.model_utils import load_model, generate_text, GenerationConfig
-    from torch.utils.data import DataLoader, Dataset
-    import torch.nn.functional as F
+    from constitutional_ai import generate_critique, generate_revision, setup_default_framework
+    from constitutional_ai.model_utils import GenerationConfig, generate_text, load_model
 
     # Step 1: Load model and constitutional framework
     logger.info("\n[1/5] Loading base model and constitutional framework...")
@@ -166,7 +158,7 @@ def phase_1_supervised_learning(
             principles=principles,
             model=model,
             tokenizer=tokenizer,
-            device=device
+            device=device,
         )
         critiques.append(critique)
 
@@ -185,7 +177,7 @@ def phase_1_supervised_learning(
             principles=principles,
             model=model,
             tokenizer=tokenizer,
-            device=device
+            device=device,
         )
         revised_responses.append(revision)
 
@@ -214,15 +206,15 @@ def phase_1_supervised_learning(
     save_path.mkdir(parents=True, exist_ok=True)
 
     phase1_data = {
-        'prompts': prompts,
-        'original_responses': original_responses,
-        'critiques': critiques,
-        'revised_responses': revised_responses,
-        'model_name': model_name
+        "prompts": prompts,
+        "original_responses": original_responses,
+        "critiques": critiques,
+        "revised_responses": revised_responses,
+        "model_name": model_name,
     }
 
-    data_file = save_path / 'phase1_data.json'
-    with open(data_file, 'w') as f:
+    data_file = save_path / "phase1_data.json"
+    with open(data_file, "w") as f:
         json.dump(phase1_data, f, indent=2)
 
     logger.info(f"\nPhase 1 data saved to: {data_file}")
@@ -242,7 +234,7 @@ def phase_2_reinforcement_learning(
     device: torch.device,
     phase1_model: str = "gpt2",
     num_ppo_steps: int = 10,
-    save_dir: str = "outputs/phase2"
+    save_dir: str = "outputs/phase2",
 ) -> str:
     """
     Phase 2: Reinforcement Learning from AI Feedback (RLAIF).
@@ -261,14 +253,15 @@ def phase_2_reinforcement_learning(
     logger.info("PHASE 2: REINFORCEMENT LEARNING FROM AI FEEDBACK")
     logger.info("=" * 80)
 
+    import torch.nn as nn
+
     from constitutional_ai import (
-        setup_default_framework,
-        RewardModel,
         PPOTrainer,
-        generate_preference_pairs
+        RewardModel,
+        generate_preference_pairs,
+        setup_default_framework,
     )
     from constitutional_ai.model_utils import load_model
-    import torch.nn as nn
 
     # Step 1: Load Phase 1 model
     logger.info("\n[1/4] Loading Phase 1 model...")
@@ -288,7 +281,7 @@ def phase_2_reinforcement_learning(
         tokenizer=tokenizer,
         framework=framework,
         device=device,
-        num_responses_per_prompt=2
+        num_responses_per_prompt=2,
     )
 
     logger.info(f"Generated {len(preference_data)} preference pairs")
@@ -318,14 +311,14 @@ def phase_2_reinforcement_learning(
 
     metrics = train_reward_model(
         reward_model=reward_model,
-        training_data=preference_data[:min(20, len(preference_data))],  # Limit for demo
+        training_data=preference_data[: min(20, len(preference_data))],  # Limit for demo
         tokenizer=tokenizer,
         num_epochs=1,  # Minimal for demo
         batch_size=2,
-        device=device
+        device=device,
     )
 
-    logger.info(f"Reward model training complete!")
+    logger.info("Reward model training complete!")
     logger.info(f"Final accuracy: {metrics['accuracy'][-1]:.2%}")
 
     # Step 4: PPO Training
@@ -339,16 +332,12 @@ def phase_2_reinforcement_learning(
             super().__init__()
             self.base_model = base_model
             self.value_head = nn.Sequential(
-                nn.Linear(hidden_size, 256),
-                nn.ReLU(),
-                nn.Linear(256, 1)
+                nn.Linear(hidden_size, 256), nn.ReLU(), nn.Linear(256, 1)
             )
 
         def forward(self, input_ids, attention_mask):
             outputs = self.base_model(
-                input_ids=input_ids,
-                attention_mask=attention_mask,
-                output_hidden_states=True
+                input_ids=input_ids, attention_mask=attention_mask, output_hidden_states=True
             )
             hidden_states = outputs.hidden_states[-1]
             sequence_lengths = attention_mask.sum(dim=1) - 1
@@ -368,23 +357,23 @@ def phase_2_reinforcement_learning(
         tokenizer=tokenizer,
         device=device,
         clip_epsilon=0.2,
-        kl_penalty=0.1
+        kl_penalty=0.1,
     )
 
     logger.info("Running PPO training...")
     logger.info(f"Number of steps: {num_ppo_steps}")
-    logger.info(f"Batch size: 2")
+    logger.info("Batch size: 2")
 
     results = ppo_trainer.train(
-        prompts=prompts[:min(10, len(prompts))],  # Limit for demo
+        prompts=prompts[: min(10, len(prompts))],  # Limit for demo
         num_steps=num_ppo_steps,
         batch_size=2,
         num_epochs_per_batch=2,  # Reduced for demo
-        checkpoint_dir=None  # No checkpointing in demo
+        checkpoint_dir=None,  # No checkpointing in demo
     )
 
     logger.info("\nPPO training complete!")
-    logger.info(f"Final stats:")
+    logger.info("Final stats:")
     logger.info(f"  Mean reward: {results['final_stats']['mean_rewards'][-1]:.4f}")
     logger.info(f"  Policy loss: {results['final_stats']['policy_losses'][-1]:.4f}")
     logger.info(f"  KL divergence: {results['final_stats']['kl_divergences'][-1]:.4f}")
@@ -394,15 +383,15 @@ def phase_2_reinforcement_learning(
     save_path.mkdir(parents=True, exist_ok=True)
 
     phase2_data = {
-        'num_preference_pairs': len(preference_data),
-        'reward_model_accuracy': float(metrics['accuracy'][-1]),
-        'ppo_steps': num_ppo_steps,
-        'final_reward': float(results['final_stats']['mean_rewards'][-1]),
-        'model_name': phase1_model
+        "num_preference_pairs": len(preference_data),
+        "reward_model_accuracy": float(metrics["accuracy"][-1]),
+        "ppo_steps": num_ppo_steps,
+        "final_reward": float(results["final_stats"]["mean_rewards"][-1]),
+        "model_name": phase1_model,
     }
 
-    data_file = save_path / 'phase2_data.json'
-    with open(data_file, 'w') as f:
+    data_file = save_path / "phase2_data.json"
+    with open(data_file, "w") as f:
         json.dump(phase2_data, f, indent=2)
 
     logger.info(f"\nPhase 2 data saved to: {data_file}")
@@ -413,11 +402,7 @@ def phase_2_reinforcement_learning(
     return phase1_model
 
 
-def evaluate_model(
-    model_name: str,
-    test_prompts: List[str],
-    device: torch.device
-):
+def evaluate_model(model_name: str, test_prompts: List[str], device: torch.device):
     """
     Evaluate the trained model.
 
@@ -430,8 +415,8 @@ def evaluate_model(
     logger.info("EVALUATION")
     logger.info("=" * 80)
 
-    from constitutional_ai.model_utils import load_model, generate_text, GenerationConfig
     from constitutional_ai import setup_default_framework
+    from constitutional_ai.model_utils import GenerationConfig, generate_text, load_model
 
     logger.info(f"\nLoading model: {model_name}")
     model, tokenizer = load_model(model_name, device=device)
@@ -465,53 +450,40 @@ Examples:
 
 For full training:
   python demo_constitutional_ai.py --phase both --num-prompts 500 --num-epochs 3 --num-ppo-steps 100
-        """
+        """,
     )
 
     parser.add_argument(
-        '--phase',
-        choices=['1', '2', 'both'],
-        default='both',
-        help='Which phase to run (default: both)'
+        "--phase",
+        choices=["1", "2", "both"],
+        default="both",
+        help="Which phase to run (default: both)",
+    )
+
+    parser.add_argument("--model", default="gpt2", help="Base model to use (default: gpt2)")
+
+    parser.add_argument(
+        "--num-prompts", type=int, default=50, help="Number of training prompts (default: 50)"
     )
 
     parser.add_argument(
-        '--model',
-        default='gpt2',
-        help='Base model to use (default: gpt2)'
+        "--num-epochs", type=int, default=3, help="Number of SFT epochs in Phase 1 (default: 3)"
     )
 
     parser.add_argument(
-        '--num-prompts',
-        type=int,
-        default=50,
-        help='Number of training prompts (default: 50)'
+        "--num-ppo-steps", type=int, default=10, help="Number of PPO steps in Phase 2 (default: 10)"
     )
 
     parser.add_argument(
-        '--num-epochs',
-        type=int,
-        default=3,
-        help='Number of SFT epochs in Phase 1 (default: 3)'
+        "--quick-test",
+        action="store_true",
+        help="Run quick test with minimal data (5 prompts, 5 PPO steps)",
     )
 
     parser.add_argument(
-        '--num-ppo-steps',
-        type=int,
-        default=10,
-        help='Number of PPO steps in Phase 2 (default: 10)'
-    )
-
-    parser.add_argument(
-        '--quick-test',
-        action='store_true',
-        help='Run quick test with minimal data (5 prompts, 5 PPO steps)'
-    )
-
-    parser.add_argument(
-        '--output-dir',
-        default='outputs',
-        help='Output directory for models and data (default: outputs)'
+        "--output-dir",
+        default="outputs",
+        help="Output directory for models and data (default: outputs)",
     )
 
     args = parser.parse_args()
@@ -534,29 +506,29 @@ For full training:
     train_prompts = prompts[:split_idx]
     test_prompts = prompts[split_idx:]
 
-    logger.info(f"\nDataset split:")
+    logger.info("\nDataset split:")
     logger.info(f"  Training: {len(train_prompts)} prompts")
     logger.info(f"  Testing: {len(test_prompts)} prompts")
 
     # Run phases
     phase1_model = args.model
 
-    if args.phase in ['1', 'both']:
+    if args.phase in ["1", "both"]:
         phase1_model = phase_1_supervised_learning(
             prompts=train_prompts,
             device=device,
             model_name=args.model,
             num_epochs=args.num_epochs,
-            save_dir=f"{args.output_dir}/phase1"
+            save_dir=f"{args.output_dir}/phase1",
         )
 
-    if args.phase in ['2', 'both']:
+    if args.phase in ["2", "both"]:
         phase_2_reinforcement_learning(
             prompts=train_prompts,
             device=device,
             phase1_model=phase1_model,
             num_ppo_steps=args.num_ppo_steps,
-            save_dir=f"{args.output_dir}/phase2"
+            save_dir=f"{args.output_dir}/phase2",
         )
 
     # Evaluate
@@ -564,7 +536,7 @@ For full training:
         evaluate_model(
             model_name=phase1_model,
             test_prompts=test_prompts[:3],  # Evaluate on 3 test prompts
-            device=device
+            device=device,
         )
 
     # Summary
@@ -576,11 +548,11 @@ For full training:
     logger.info(f"  Training prompts: {len(train_prompts)}")
     logger.info(f"  Test prompts: {len(test_prompts)}")
 
-    if args.phase in ['1', 'both']:
-        logger.info(f"  Phase 1: ✅ Critique-revision complete")
+    if args.phase in ["1", "both"]:
+        logger.info("  Phase 1: ✅ Critique-revision complete")
 
-    if args.phase in ['2', 'both']:
-        logger.info(f"  Phase 2: ✅ RLAIF complete")
+    if args.phase in ["2", "both"]:
+        logger.info("  Phase 2: ✅ RLAIF complete")
 
     logger.info(f"\nOutputs saved to: {args.output_dir}/")
     logger.info("\nNext steps:")
@@ -592,5 +564,5 @@ For full training:
     logger.info("\n" + "=" * 80)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

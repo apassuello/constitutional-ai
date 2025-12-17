@@ -16,7 +16,6 @@ import logging
 from collections.abc import Callable
 from typing import Any, Dict, List
 
-
 logger = logging.getLogger(__name__)
 
 

@@ -10,6 +10,7 @@ DEPENDENCIES: torch, transformers, tqdm, typing, framework, model_utils
 SPECIAL NOTES: Implements Phase 1 of Constitutional AI methodology from Anthropic (2022)
 """
 
+import logging
 from typing import Any, Dict, List
 
 import torch
@@ -17,12 +18,9 @@ from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
 from transformers import PreTrainedModel, PreTrainedTokenizer
 
-import logging
-
 from .framework import ConstitutionalFramework
 from .model_utils import GenerationConfig, generate_text
 from .principles import get_eval_debug_level, set_eval_debug_level
-
 
 # Module logger (prefixed with _ to avoid shadowing the logger parameter in functions)
 _logger = logging.getLogger(__name__)
@@ -583,7 +581,9 @@ def supervised_finetune(
         elif "revised_response" in item:
             response_key = "revised_response"
         else:
-            _logger.info(f"Warning: Skipping training example {idx}: missing response or revised_response")
+            _logger.info(
+                f"Warning: Skipping training example {idx}: missing response or revised_response"
+            )
             continue
 
         prompt = item.get("prompt", "").strip()

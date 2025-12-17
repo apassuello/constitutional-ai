@@ -8,13 +8,11 @@ DEPENDENCIES: transformers, torch
 SPECIAL NOTES: Provides model integration for constitutional training
 """
 
+import logging
 from dataclasses import dataclass
 from typing import List
 
 import torch
-
-import logging
-
 
 logger = logging.getLogger(__name__)
 

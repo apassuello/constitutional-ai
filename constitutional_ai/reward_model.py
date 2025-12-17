@@ -9,14 +9,12 @@ DEPENDENCIES: torch, transformers, typing
 SPECIAL NOTES: Implements Component 2 of Constitutional AI - trains reward model on preference pairs
 """
 
+import logging
 from typing import Any, Dict, List
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
-import logging
-
 
 logger = logging.getLogger(__name__)
 import json

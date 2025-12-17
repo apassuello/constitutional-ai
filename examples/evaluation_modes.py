@@ -11,6 +11,7 @@ Demonstrates the three evaluation modes available in Constitutional AI:
 try:
     import torch
     from transformers import AutoModelForCausalLM, AutoTokenizer
+
     HAS_TRANSFORMERS = True
 except ImportError:
     HAS_TRANSFORMERS = False
@@ -34,7 +35,7 @@ def demo_regex_mode():
 
     print(f"\nMethod: {result['evaluation_method']}")
     print(f"Flagged: {result['any_flagged']}")
-    if result['any_flagged']:
+    if result["any_flagged"]:
         print(f"Violations: {result['flagged_principles']}")
 
     print("\nPros: Very fast, deterministic, no model required")
@@ -69,7 +70,7 @@ def demo_ai_mode():
 
     print(f"\nMethod: {result['evaluation_method']}")
     print(f"Flagged: {result['any_flagged']}")
-    if result['any_flagged']:
+    if result["any_flagged"]:
         print(f"Violations: {result['flagged_principles']}")
 
     print("\nPros: Context-aware, understands technical vs harmful usage")
@@ -99,9 +100,9 @@ def demo_hf_api_mode():
 
     print(f"\nMethod: {result['evaluation_method']}")
     print(f"Flagged: {result['any_flagged']}")
-    if result['any_flagged']:
+    if result["any_flagged"]:
         print(f"Violations: {result['flagged_principles']}")
-        if 'hf_api_details' in result:
+        if "hf_api_details" in result:
             print(f"Toxicity Score: {result['hf_api_details']['toxicity_score']:.3f}")
 
     print("\nPros: Most accurate (~98%), no local model needed")

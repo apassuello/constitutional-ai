@@ -9,7 +9,6 @@ Tests cover:
 - Integration with PreferenceDataset
 """
 
-import shutil
 import tempfile
 from pathlib import Path
 

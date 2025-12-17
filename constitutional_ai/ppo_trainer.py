@@ -9,14 +9,12 @@ DEPENDENCIES: torch, transformers, typing
 SPECIAL NOTES: Implements full PPO algorithm for RLAIF Phase 2c
 """
 
+import logging
 from typing import Any, Dict, List, Tuple
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
-import logging
-
 
 logger = logging.getLogger(__name__)
 import copy

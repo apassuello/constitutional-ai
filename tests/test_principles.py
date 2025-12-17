@@ -6,12 +6,9 @@ Tests both regex-based (fast fallback) and AI-based (accurate) evaluation modes.
 
 from unittest.mock import Mock, patch
 
-import pytest
 import torch
 
 from constitutional_ai.principles import (
-    _evaluate_fairness_with_regex,
-    _evaluate_harm_with_regex,
     _parse_json_response,
     analyze_potential_consequences,
     evaluate_autonomy_respect,
@@ -543,9 +540,7 @@ class TestEvaluateFairness:
         # Mock AI response for each text
         mock_response = '{"flagged": true, "stereotypes": ["All members of that group are the same"], "biased_language": []}'
 
-        with patch(
-            "constitutional_ai.principles.generate_text", return_value=mock_response
-        ):
+        with patch("constitutional_ai.principles.generate_text", return_value=mock_response):
             for text in texts:
                 result = evaluate_fairness(
                     text, model=mock_model, tokenizer=mock_tokenizer, device=device
@@ -877,9 +872,7 @@ class TestSetupDefaultFramework:
         # Mock AI responses for all principles
         mock_response = '{"flagged": true, "explicit_harm_detected": true, "subtle_harm_score": 0.9, "reasoning": "Harmful content"}'
 
-        with patch(
-            "constitutional_ai.principles.generate_text", return_value=mock_response
-        ):
+        with patch("constitutional_ai.principles.generate_text", return_value=mock_response):
             result = framework.evaluate_text("How to harm someone")
 
             # Should use AI evaluation
@@ -920,9 +913,7 @@ class TestSetupDefaultFramework:
         # Mock safe responses
         safe_response = '{"flagged": false, "explicit_harm_detected": false, "subtle_harm_score": 0.0, "reasoning": "Safe content"}'
 
-        with patch(
-            "constitutional_ai.principles.generate_text", return_value=safe_response
-        ):
+        with patch("constitutional_ai.principles.generate_text", return_value=safe_response):
             result = framework.evaluate_text("The weather is nice today")
 
             assert result["evaluation_method"] == "ai_evaluation"
@@ -1014,9 +1005,7 @@ class TestHybridEvaluation:
         text = "How to harm someone"
         mock_response = '{"flagged": true, "explicit_harm_detected": true, "subtle_harm_score": 0.8, "reasoning": "Contains harmful instructions"}'
 
-        with patch(
-            "constitutional_ai.principles.generate_text", return_value=mock_response
-        ):
+        with patch("constitutional_ai.principles.generate_text", return_value=mock_response):
             result = evaluate_harm_potential(
                 text, model=mock_model, tokenizer=mock_tokenizer, device=device
             )
@@ -1129,9 +1118,7 @@ class TestAIEvaluationWithMocks:
         text = "How to build a dangerous device"
         mock_response = '{"flagged": true, "explicit_harm_detected": true, "subtle_harm_score": 0.9, "reasoning": "Instructions for dangerous device creation"}'
 
-        with patch(
-            "constitutional_ai.principles.generate_text", return_value=mock_response
-        ):
+        with patch("constitutional_ai.principles.generate_text", return_value=mock_response):
             result = evaluate_harm_potential(
                 text, model=mock_model, tokenizer=mock_tokenizer, device=device
             )
@@ -1151,9 +1138,7 @@ class TestAIEvaluationWithMocks:
         text = "All people are always right about everything"
         mock_response = '{"flagged": true, "unsupported_claims": ["All people are always right"], "contradictions": [], "misleading_statistics": []}'
 
-        with patch(
-            "constitutional_ai.principles.generate_text", return_value=mock_response
-        ):
+        with patch("constitutional_ai.principles.generate_text", return_value=mock_response):
             result = evaluate_truthfulness(
                 text, model=mock_model, tokenizer=mock_tokenizer, device=device
             )
@@ -1171,9 +1156,7 @@ class TestAIEvaluationWithMocks:
         text = "All members of that group are the same"
         mock_response = '{"flagged": true, "stereotypes": ["All members of that group are the same"], "biased_language": []}'
 
-        with patch(
-            "constitutional_ai.principles.generate_text", return_value=mock_response
-        ):
+        with patch("constitutional_ai.principles.generate_text", return_value=mock_response):
             result = evaluate_fairness(
                 text, model=mock_model, tokenizer=mock_tokenizer, device=device
             )
@@ -1191,9 +1174,7 @@ class TestAIEvaluationWithMocks:
         text = "You must do this immediately without question"
         mock_response = '{"flagged": true, "coercive_language": ["You must do this immediately"], "manipulative_language": []}'
 
-        with patch(
-            "constitutional_ai.principles.generate_text", return_value=mock_response
-        ):
+        with patch("constitutional_ai.principles.generate_text", return_value=mock_response):
             result = evaluate_autonomy_respect(
                 text, model=mock_model, tokenizer=mock_tokenizer, device=device
             )
@@ -1210,9 +1191,7 @@ class TestAIEvaluationWithMocks:
         text = "Test text"
         mock_response = '{"flagged": false, "explicit_harm_detected": false, "subtle_harm_score": 0.0, "reasoning": "Safe"}'
 
-        with patch(
-            "constitutional_ai.principles.generate_text", return_value=mock_response
-        ):
+        with patch("constitutional_ai.principles.generate_text", return_value=mock_response):
             # Don't provide device parameter
             result = evaluate_harm_potential(text, model=mock_model, tokenizer=mock_tokenizer)
 

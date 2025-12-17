@@ -9,15 +9,13 @@ DEPENDENCIES: torch, transformers, typing
 SPECIAL NOTES: Implements Component 3 of Constitutional AI (RLAIF Phase 2b)
 """
 
+import logging
 import re
 from itertools import combinations
 from typing import Any, Dict, List
 
 import torch
 from torch.utils.data import Dataset
-
-import logging
-
 
 logger = logging.getLogger(__name__)
 

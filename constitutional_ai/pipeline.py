@@ -9,13 +9,11 @@ DEPENDENCIES: torch, critique_revision, preference_comparison, reward_model, ppo
 SPECIAL NOTES: Implements full Anthropic Constitutional AI methodology
 """
 
+import logging
 from typing import Any, Dict, List
 
 import torch
 import torch.nn as nn
-
-import logging
-
 
 # Module logger
 logger = logging.getLogger(__name__)

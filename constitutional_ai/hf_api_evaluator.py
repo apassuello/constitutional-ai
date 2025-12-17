@@ -10,14 +10,12 @@ SPECIAL NOTES: Uses HF Inference API for accurate toxicity/harm detection withou
               Much more accurate than regex for subtle harmful content.
 """
 
+import logging
 import os
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any, Dict
-
-import logging
-
 
 logger = logging.getLogger(__name__)
 
