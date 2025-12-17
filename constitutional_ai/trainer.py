@@ -12,11 +12,9 @@ constitutional evaluation with PPO-based reinforcement learning
 import logging
 from typing import Any, Dict, List
 
+import numpy as np
 import torch
 import torch.nn as nn
-
-logger = logging.getLogger(__name__)
-import numpy as np
 from tqdm import tqdm
 
 from .evaluator import ConstitutionalSafetyEvaluator
@@ -24,6 +22,8 @@ from .framework import ConstitutionalFramework
 from .ppo_trainer import PPOTrainer
 from .principles import setup_default_framework
 from .reward_model import RewardModel
+
+logger = logging.getLogger(__name__)
 
 
 class RLAIFTrainer:

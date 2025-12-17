@@ -10,16 +10,12 @@ SPECIAL NOTES: Implements full Anthropic Constitutional AI methodology
 """
 
 import logging
+import os
+from pathlib import Path
 from typing import Any, Dict, List
 
 import torch
 import torch.nn as nn
-
-# Module logger
-logger = logging.getLogger(__name__)
-import os
-from pathlib import Path
-
 from tqdm import tqdm
 
 from .critique_revision import critique_revision_pipeline, supervised_finetune
@@ -28,6 +24,9 @@ from .ppo_trainer import PPOTrainer
 from .preference_comparison import generate_preference_pairs
 from .principles import setup_default_framework
 from .reward_model import RewardModel, RewardModelTrainer
+
+# Module logger
+logger = logging.getLogger(__name__)
 
 
 class ConstitutionalPipeline:

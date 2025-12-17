@@ -12,11 +12,9 @@ SPECIAL NOTES: Implements four core constitutional principles from Constitutiona
              evaluation (fast, no model required) for backward compatibility.
 """
 
+import json
 import logging
 import re
-
-_module_logger = logging.getLogger(__name__)
-import json
 from typing import Any, Dict, List
 
 import torch
@@ -24,6 +22,8 @@ from transformers import PreTrainedModel, PreTrainedTokenizer
 
 from .framework import ConstitutionalFramework, ConstitutionalPrinciple
 from .model_utils import GenerationConfig, generate_text
+
+_module_logger = logging.getLogger(__name__)
 
 # =============================================================================
 # DEBUG CONFIGURATION

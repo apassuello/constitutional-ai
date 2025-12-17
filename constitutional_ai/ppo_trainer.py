@@ -9,20 +9,19 @@ DEPENDENCIES: torch, transformers, typing
 SPECIAL NOTES: Implements full PPO algorithm for RLAIF Phase 2c
 """
 
+import copy
 import logging
 from typing import Any, Dict, List, Tuple
 
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
-logger = logging.getLogger(__name__)
-import copy
-
-import numpy as np
 from tqdm import tqdm
 
 from .model_utils import GenerationConfig, generate_text
+
+logger = logging.getLogger(__name__)
 
 
 class PPOTrainer:

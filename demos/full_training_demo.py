@@ -415,12 +415,10 @@ def evaluate_model(model_name: str, test_prompts: List[str], device: torch.devic
     logger.info("EVALUATION")
     logger.info("=" * 80)
 
-    from constitutional_ai import setup_default_framework
     from constitutional_ai.model_utils import GenerationConfig, generate_text, load_model
 
     logger.info(f"\nLoading model: {model_name}")
     model, tokenizer = load_model(model_name, device=device)
-    framework = setup_default_framework()
 
     logger.info(f"Generating responses for {len(test_prompts)} test prompts...")
 
