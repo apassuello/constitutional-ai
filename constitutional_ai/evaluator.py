@@ -7,7 +7,7 @@ DEPENDENCIES: typing, framework, principles
 SPECIAL NOTES: Implements the two-stage Constitutional AI evaluation process
 """
 
-from typing import Any, Dict, Tuple
+from typing import Any
 
 import torch.nn as nn
 
@@ -49,7 +49,7 @@ class ConstitutionalSafetyEvaluator:
             "flagged_by_both": 0,
         }
 
-    def evaluate(self, text: str, include_critique: bool | None = None) -> Dict[str, Any]:
+    def evaluate(self, text: str, include_critique: bool | None = None) -> dict[str, Any]:
         """
         Evaluate text using constitutional principles and optional self-critique.
 
@@ -99,7 +99,7 @@ class ConstitutionalSafetyEvaluator:
 
         return result
 
-    def evaluate_with_self_critique(self, text: str) -> Dict[str, Any]:
+    def evaluate_with_self_critique(self, text: str) -> dict[str, Any]:
         """
         Evaluate text using full two-stage constitutional process.
         Alias for evaluate() with self-critique enabled.
@@ -114,7 +114,7 @@ class ConstitutionalSafetyEvaluator:
 
     def generate_improved_response(
         self, prompt: str, initial_response: str, max_iterations: int = 3
-    ) -> Tuple[str, Dict[str, Any]]:
+    ) -> tuple[str, dict[str, Any]]:
         """
         Generate improved response based on constitutional evaluation.
         Iteratively refines response until it passes constitutional checks.
@@ -162,7 +162,7 @@ class ConstitutionalSafetyEvaluator:
         final_evaluation = self.evaluate(current_response)
         return current_response, final_evaluation
 
-    def _generate_critique(self, text: str, direct_evaluation: Dict[str, Any]) -> Dict[str, Any]:
+    def _generate_critique(self, text: str, direct_evaluation: dict[str, Any]) -> dict[str, Any]:
         """
         Generate self-critique using the critique model.
 
@@ -184,7 +184,7 @@ class ConstitutionalSafetyEvaluator:
 
         return {"text": critique_text, "flagged": flagged, "prompt": critique_prompt}
 
-    def _create_critique_prompt(self, text: str, direct_evaluation: Dict[str, Any]) -> str:
+    def _create_critique_prompt(self, text: str, direct_evaluation: dict[str, Any]) -> str:
         """Create prompt for critique generation."""
         principles_text = ", ".join(self.framework.get_active_principles())
 
@@ -201,7 +201,7 @@ Provide a detailed analysis of potential issues:"""
         return prompt
 
     def _create_improvement_prompt(
-        self, prompt: str, response: str, evaluation: Dict[str, Any]
+        self, prompt: str, response: str, evaluation: dict[str, Any]
     ) -> str:
         """Create prompt for generating improved response."""
         issues = evaluation.get("reasoning", "Unspecified issues")
@@ -258,7 +258,7 @@ Please provide an improved response that addresses these issues while still bein
         return self._generate_with_model(prompt)
 
     def _synthesize_reasoning(
-        self, direct_evaluation: Dict[str, Any], critique: Dict[str, Any] | None = None
+        self, direct_evaluation: dict[str, Any], critique: dict[str, Any] | None = None
     ) -> str:
         """
         Combine direct evaluation and critique into coherent reasoning.
@@ -291,7 +291,7 @@ Please provide an improved response that addresses these issues while still bein
 
         return "\n".join(reasoning_parts)
 
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Get evaluation statistics."""
         return {**self.stats, "framework_stats": self.framework.get_statistics()}
 
@@ -342,7 +342,7 @@ def critique_indicates_issues(critique: str) -> bool:
     return concern_count >= 2
 
 
-def combine_reasoning(direct_evaluation: Dict[str, Any], critique: str) -> str:
+def combine_reasoning(direct_evaluation: dict[str, Any], critique: str) -> str:
     """
     Combine direct evaluation and critique into reasoning.
     Legacy function for backward compatibility.

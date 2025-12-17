@@ -10,7 +10,6 @@ SPECIAL NOTES: Provides model integration for constitutional training
 
 import logging
 from dataclasses import dataclass
-from typing import List
 
 import torch
 
@@ -163,12 +162,12 @@ def generate_text(
 def batch_generate(
     model,
     tokenizer,
-    prompts: List[str],
+    prompts: list[str],
     generation_config: GenerationConfig | None = None,
     batch_size: int = 4,
     device: torch.device | None = None,
     show_progress: bool = True,
-) -> List[str]:
+) -> list[str]:
     """
     Generate text for multiple prompts in batches.
 

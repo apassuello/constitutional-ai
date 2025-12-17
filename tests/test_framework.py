@@ -3,7 +3,7 @@ Unit tests for framework.py
 Tests the core Constitutional AI framework classes (ConstitutionalPrinciple and ConstitutionalFramework).
 """
 
-from typing import Any, Dict
+from typing import Any
 
 import pytest
 
@@ -17,11 +17,11 @@ class TestConstitutionalPrinciple:
         """Setup test fixtures."""
 
         # Simple evaluation function that always flags
-        def eval_always_flag(text: str) -> Dict[str, Any]:
+        def eval_always_flag(text: str) -> dict[str, Any]:
             return {"flagged": True, "reason": "Test flagging", "score": 0.8}
 
         # Evaluation function that flags if "bad" in text
-        def eval_contains_bad(text: str) -> Dict[str, Any]:
+        def eval_contains_bad(text: str) -> dict[str, Any]:
             flagged = "bad" in text.lower()
             return {
                 "flagged": flagged,
@@ -30,7 +30,7 @@ class TestConstitutionalPrinciple:
             }
 
         # Evaluation function that never flags
-        def eval_never_flag(text: str) -> Dict[str, Any]:
+        def eval_never_flag(text: str) -> dict[str, Any]:
             return {"flagged": False, "reason": "Always passes", "score": 0.0}
 
         self.eval_always_flag = eval_always_flag
@@ -133,7 +133,7 @@ class TestConstitutionalPrinciple:
     def test_principle_with_complex_evaluation(self):
         """Test principle with complex evaluation function."""
 
-        def complex_eval(text: str) -> Dict[str, Any]:
+        def complex_eval(text: str) -> dict[str, Any]:
             word_count = len(text.split())
             flagged = word_count > 10
             return {
@@ -186,7 +186,7 @@ class TestConstitutionalFramework:
         """Setup test fixtures."""
 
         # Create sample evaluation functions
-        def eval_harm(text: str) -> Dict[str, Any]:
+        def eval_harm(text: str) -> dict[str, Any]:
             harmful_words = ["kill", "hurt", "destroy"]
             flagged = any(word in text.lower() for word in harmful_words)
             return {
@@ -194,7 +194,7 @@ class TestConstitutionalFramework:
                 "reason": "Contains harmful content" if flagged else "No harm detected",
             }
 
-        def eval_truthfulness(text: str) -> Dict[str, Any]:
+        def eval_truthfulness(text: str) -> dict[str, Any]:
             lie_indicators = ["definitely", "guaranteed", "always", "never"]
             flagged = any(word in text.lower() for word in lie_indicators)
             return {
@@ -202,7 +202,7 @@ class TestConstitutionalFramework:
                 "reason": "Contains absolute claims" if flagged else "Truthful",
             }
 
-        def eval_fairness(text: str) -> Dict[str, Any]:
+        def eval_fairness(text: str) -> dict[str, Any]:
             bias_words = ["all", "every", "none"]
             flagged = any(word in text.lower() for word in bias_words)
             return {"flagged": flagged, "reason": "Contains generalization" if flagged else "Fair"}
@@ -588,7 +588,7 @@ class TestEdgeCases:
     def test_evaluation_with_all_disabled_principles(self):
         """Test evaluation when all principles are disabled."""
 
-        def eval_fn(text: str) -> Dict[str, Any]:
+        def eval_fn(text: str) -> dict[str, Any]:
             return {"flagged": True, "reason": "Test"}
 
         framework = ConstitutionalFramework()
@@ -603,7 +603,7 @@ class TestEdgeCases:
     def test_principle_with_exception_in_evaluation(self):
         """Test handling of exceptions in evaluation function."""
 
-        def eval_raises_exception(text: str) -> Dict[str, Any]:
+        def eval_raises_exception(text: str) -> dict[str, Any]:
             raise ValueError("Evaluation error")
 
         principle = ConstitutionalPrinciple("error_principle", "desc", eval_raises_exception)
@@ -618,7 +618,7 @@ class TestEdgeCases:
     def test_very_long_text_evaluation(self):
         """Test evaluation with very long text."""
 
-        def eval_fn(text: str) -> Dict[str, Any]:
+        def eval_fn(text: str) -> dict[str, Any]:
             return {"flagged": len(text) > 1000, "reason": "Length check"}
 
         framework = ConstitutionalFramework()
@@ -634,7 +634,7 @@ class TestEdgeCases:
     def test_empty_text_evaluation(self):
         """Test evaluation with empty text."""
 
-        def eval_fn(text: str) -> Dict[str, Any]:
+        def eval_fn(text: str) -> dict[str, Any]:
             return {"flagged": len(text) == 0, "reason": "Empty"}
 
         framework = ConstitutionalFramework()
@@ -649,7 +649,7 @@ class TestEdgeCases:
     def test_unicode_text_evaluation(self):
         """Test evaluation with unicode text."""
 
-        def eval_fn(text: str) -> Dict[str, Any]:
+        def eval_fn(text: str) -> dict[str, Any]:
             return {"flagged": "🚫" in text, "reason": "Emoji check"}
 
         framework = ConstitutionalFramework()
@@ -663,7 +663,7 @@ class TestEdgeCases:
     def test_principle_weight_zero(self):
         """Test principle with zero weight."""
 
-        def eval_fn(text: str) -> Dict[str, Any]:
+        def eval_fn(text: str) -> dict[str, Any]:
             return {"flagged": True, "reason": "Always flags"}
 
         framework = ConstitutionalFramework()
@@ -678,7 +678,7 @@ class TestEdgeCases:
     def test_principle_negative_weight(self):
         """Test principle with negative weight."""
 
-        def eval_fn(text: str) -> Dict[str, Any]:
+        def eval_fn(text: str) -> dict[str, Any]:
             return {"flagged": True, "reason": "Always flags"}
 
         framework = ConstitutionalFramework()
@@ -693,7 +693,7 @@ class TestEdgeCases:
     def test_very_high_weight(self):
         """Test principle with very high weight."""
 
-        def eval_fn(text: str) -> Dict[str, Any]:
+        def eval_fn(text: str) -> dict[str, Any]:
             return {"flagged": True, "reason": "Always flags"}
 
         framework = ConstitutionalFramework()
@@ -707,7 +707,7 @@ class TestEdgeCases:
     def test_multiple_evaluations_same_text(self):
         """Test evaluating the same text multiple times."""
 
-        def eval_fn(text: str) -> Dict[str, Any]:
+        def eval_fn(text: str) -> dict[str, Any]:
             return {"flagged": "bad" in text, "reason": "Check"}
 
         framework = ConstitutionalFramework()
@@ -725,7 +725,7 @@ class TestEdgeCases:
     def test_batch_evaluate_with_mixed_results(self):
         """Test batch evaluation with mix of clean and flagged texts."""
 
-        def eval_fn(text: str) -> Dict[str, Any]:
+        def eval_fn(text: str) -> dict[str, Any]:
             return {"flagged": "bad" in text.lower(), "reason": "Check"}
 
         framework = ConstitutionalFramework()
@@ -741,7 +741,7 @@ class TestEdgeCases:
     def test_evaluation_result_contains_all_expected_keys(self):
         """Test that evaluation result contains all expected keys."""
 
-        def eval_fn(text: str) -> Dict[str, Any]:
+        def eval_fn(text: str) -> dict[str, Any]:
             return {"flagged": False, "reason": "Test"}
 
         framework = ConstitutionalFramework()

@@ -8,7 +8,7 @@ SPECIAL NOTES: Extends safety filtering with principled transformations
 """
 
 import re
-from typing import Any, Dict, Tuple
+from typing import Any
 
 from .framework import ConstitutionalFramework
 from .principles import setup_default_framework
@@ -52,8 +52,8 @@ class ConstitutionalSafetyFilter:
         }
 
     def validate_input(
-        self, input_text: str, metadata: Dict[str, Any] | None = None, override: bool = False
-    ) -> Tuple[bool, Dict[str, Any]]:
+        self, input_text: str, metadata: dict[str, Any] | None = None, override: bool = False
+    ) -> tuple[bool, dict[str, Any]]:
         """
         Validate input text using constitutional principles.
 
@@ -113,9 +113,9 @@ class ConstitutionalSafetyFilter:
     def filter_output(
         self,
         output_text: str,
-        metadata: Dict[str, Any] | None = None,
+        metadata: dict[str, Any] | None = None,
         apply_transformations: bool = True,
-    ) -> Tuple[str, Dict[str, Any]]:
+    ) -> tuple[str, dict[str, Any]]:
         """
         Filter output text using constitutional principles.
 
@@ -171,7 +171,7 @@ class ConstitutionalSafetyFilter:
         return filtered_text, filtering_info
 
     def _apply_constitutional_filtering(
-        self, text: str, evaluation: Dict[str, Any], filtering_info: Dict[str, Any]
+        self, text: str, evaluation: dict[str, Any], filtering_info: dict[str, Any]
     ) -> str:
         """
         Apply constitutional principles to filter text.
@@ -210,7 +210,7 @@ class ConstitutionalSafetyFilter:
         filtering_info["transformations_applied"] = transformations
         return filtered_text
 
-    def _filter_harmful_content(self, text: str, evaluation: Dict[str, Any]) -> str:
+    def _filter_harmful_content(self, text: str, evaluation: dict[str, Any]) -> str:
         """Filter content that could cause harm."""
         if evaluation.get("explicit_harm_detected", False):
             # Replace explicit harmful instructions with refusal
@@ -238,7 +238,7 @@ class ConstitutionalSafetyFilter:
 
         return text
 
-    def _add_truthfulness_qualifiers(self, text: str, evaluation: Dict[str, Any]) -> str:
+    def _add_truthfulness_qualifiers(self, text: str, evaluation: dict[str, Any]) -> str:
         """Add qualifiers to potentially misleading content."""
         qualifiers_added = False
 
@@ -264,7 +264,7 @@ class ConstitutionalSafetyFilter:
 
         return text
 
-    def _filter_biased_content(self, text: str, evaluation: Dict[str, Any]) -> str:
+    def _filter_biased_content(self, text: str, evaluation: dict[str, Any]) -> str:
         """Filter biased or unfair language."""
         # Replace problematic generalizations
         if evaluation.get("stereotypes", []):
@@ -294,7 +294,7 @@ class ConstitutionalSafetyFilter:
 
         return text
 
-    def _filter_autonomy_violations(self, text: str, evaluation: Dict[str, Any]) -> str:
+    def _filter_autonomy_violations(self, text: str, evaluation: dict[str, Any]) -> str:
         """Filter content that may violate autonomy."""
         # Replace coercive language with more respectful alternatives
         if evaluation.get("coercive_language", []):
@@ -322,7 +322,7 @@ class ConstitutionalSafetyFilter:
 
         return text
 
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Get filtering statistics."""
         return {**self.stats, "framework_stats": self.constitutional_framework.get_statistics()}
 

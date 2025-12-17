@@ -22,7 +22,7 @@ Usage:
 import argparse
 import json
 import os
-from typing import Any, Dict, List
+from typing import Any
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -54,7 +54,7 @@ def set_seed(seed: int = 42):
         torch.cuda.manual_seed_all(seed)
 
 
-def get_training_prompts(num_prompts: int = 15) -> List[str]:
+def get_training_prompts(num_prompts: int = 15) -> list[str]:
     """Get prompts for training."""
     all_prompts = create_default_prompts()
 
@@ -74,12 +74,12 @@ def get_training_prompts(num_prompts: int = 15) -> List[str]:
 def evaluate_model_responses(
     model,
     tokenizer,
-    prompts: List[str],
+    prompts: list[str],
     evaluator: ConstitutionalSafetyEvaluator,
     generation_config: GenerationConfig,
     device: torch.device,
     desc: str = "Evaluating",
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Generate responses from model and evaluate them.
 
@@ -145,9 +145,9 @@ def evaluate_model_responses(
 
 
 def visualize_comparison(
-    baseline_metrics: Dict[str, Any],
-    finetuned_metrics: Dict[str, Any],
-    training_history: Dict[str, Any],
+    baseline_metrics: dict[str, Any],
+    finetuned_metrics: dict[str, Any],
+    training_history: dict[str, Any],
     save_path: str = "constitutional_real_training_comparison.png",
 ):
     """

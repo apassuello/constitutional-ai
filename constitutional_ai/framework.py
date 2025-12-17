@@ -14,7 +14,7 @@ SPECIAL NOTES: Foundation for Constitutional AI approach inspired by Anthropic's
 import inspect
 import logging
 from collections.abc import Callable
-from typing import Any, Dict, List
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +38,7 @@ class ConstitutionalPrinciple:
         self,
         name: str,
         description: str,
-        evaluation_fn: Callable[[str], Dict[str, Any]],
+        evaluation_fn: Callable[[str], dict[str, Any]],
         weight: float = 1.0,
         enabled: bool = True,
     ):
@@ -65,7 +65,7 @@ class ConstitutionalPrinciple:
         tokenizer: Any | None = None,
         device: Any | None = None,
         logger=None,  # type: ignore
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Evaluate text against this principle.
 
@@ -162,8 +162,8 @@ class ConstitutionalFramework:
         else:
             self.device = None
 
-        self.principles: Dict[str, ConstitutionalPrinciple] = {}
-        self.evaluation_history: List[Dict[str, Any]] = []
+        self.principles: dict[str, ConstitutionalPrinciple] = {}
+        self.evaluation_history: list[dict[str, Any]] = []
         self._model_name: str | None = None  # Track model name for display
 
         # HuggingFace API configuration
@@ -325,7 +325,7 @@ class ConstitutionalFramework:
         if name in self.principles:
             self.principles[name].enabled = False
 
-    def evaluate_text(self, text: str, track_history: bool = False, logger=None) -> Dict[str, Any]:  # type: ignore
+    def evaluate_text(self, text: str, track_history: bool = False, logger=None) -> dict[str, Any]:  # type: ignore
         """
         Evaluate text against all constitutional principles.
 
@@ -395,7 +395,7 @@ class ConstitutionalFramework:
 
     def _evaluate_with_hf_api(
         self, text: str, track_history: bool = False, logger=None  # type: ignore
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Evaluate text using HuggingFace API.
 
@@ -460,7 +460,7 @@ class ConstitutionalFramework:
 
         return evaluation
 
-    def batch_evaluate(self, texts: List[str]) -> List[Dict[str, Any]]:
+    def batch_evaluate(self, texts: list[str]) -> list[dict[str, Any]]:
         """
         Evaluate multiple texts.
 
@@ -472,7 +472,7 @@ class ConstitutionalFramework:
         """
         return [self.evaluate_text(text) for text in texts]
 
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """
         Get statistics from evaluation history.
 
@@ -508,7 +508,7 @@ class ConstitutionalFramework:
         """Clear evaluation history."""
         self.evaluation_history = []
 
-    def get_active_principles(self) -> List[str]:
+    def get_active_principles(self) -> list[str]:
         """Get list of currently enabled principle names."""
         return [name for name, principle in self.principles.items() if principle.enabled]
 

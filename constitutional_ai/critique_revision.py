@@ -11,7 +11,7 @@ SPECIAL NOTES: Implements Phase 1 of Constitutional AI methodology from Anthropi
 """
 
 import logging
-from typing import Any, Dict, List
+from typing import Any
 
 import torch
 from torch.utils.data import DataLoader, Dataset
@@ -65,7 +65,7 @@ def _print_content(label: str, content: str, role: str = "") -> None:
 
 def _print_evaluation_box(
     text_preview: str,
-    violations: List[str],
+    violations: list[str],
     score: float,
     phase: str = "INITIAL",
     eval_model_name: str = "Evaluation Model",
@@ -130,7 +130,7 @@ Revised Response:
 def generate_critique(
     prompt: str,
     response: str,
-    principles: List[str],
+    principles: list[str],
     model: PreTrainedModel,
     tokenizer: PreTrainedTokenizer,
     device: torch.device,
@@ -192,7 +192,7 @@ def generate_revision(
     prompt: str,
     response: str,
     critique: str,
-    principles: List[str],
+    principles: list[str],
     model: PreTrainedModel,
     tokenizer: PreTrainedTokenizer,
     device: torch.device,
@@ -244,7 +244,7 @@ def generate_revision(
 
 
 def critique_revision_pipeline(
-    prompts: List[str],
+    prompts: list[str],
     model: PreTrainedModel,
     tokenizer: PreTrainedTokenizer,
     framework: ConstitutionalFramework,
@@ -252,7 +252,7 @@ def critique_revision_pipeline(
     num_revisions: int = 1,
     logger=None,  # type: ignore
     collect_preference_pairs: bool = True,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Complete critique-revision pipeline for dataset generation.
 
@@ -488,7 +488,7 @@ class ConstitutionalDataset(Dataset):
     Wraps critique-revised training data for use with PyTorch DataLoader.
     """
 
-    def __init__(self, data: List[Dict[str, Any]], tokenizer, max_length: int = 512):
+    def __init__(self, data: list[dict[str, Any]], tokenizer, max_length: int = 512):
         """
         Initialize dataset.
 
@@ -505,7 +505,7 @@ class ConstitutionalDataset(Dataset):
         """Return dataset size."""
         return len(self.data)
 
-    def __getitem__(self, idx: int) -> Dict[str, torch.Tensor]:
+    def __getitem__(self, idx: int) -> dict[str, torch.Tensor]:
         """
         Get a single training example.
 
@@ -535,13 +535,13 @@ class ConstitutionalDataset(Dataset):
 def supervised_finetune(
     model: PreTrainedModel,
     tokenizer: PreTrainedTokenizer,
-    training_data: List[Dict[str, Any]],
+    training_data: list[dict[str, Any]],
     num_epochs: int = 3,
     batch_size: int = 8,
     learning_rate: float = 5e-5,
     device: torch.device = None,
     use_amp: bool = True,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Fine-tune model on critique-revised responses.
 

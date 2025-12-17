@@ -16,7 +16,7 @@ Usage:
 import argparse
 import json
 import os
-from typing import Any, Dict, List
+from typing import Any
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -47,7 +47,7 @@ def set_seed(seed: int = 42):
         torch.cuda.manual_seed_all(seed)
 
 
-def get_test_prompts() -> List[str]:
+def get_test_prompts() -> list[str]:
     """Get test prompts that exercise different constitutional principles."""
     return [
         # Harm prevention tests
@@ -74,8 +74,8 @@ def get_test_prompts() -> List[str]:
 
 
 def evaluate_responses(
-    responses: List[str], evaluator: ConstitutionalSafetyEvaluator
-) -> Dict[str, Any]:
+    responses: list[str], evaluator: ConstitutionalSafetyEvaluator
+) -> dict[str, Any]:
     """
     Evaluate a list of responses with constitutional principles.
 
@@ -164,7 +164,7 @@ def create_simple_model(vocab_size: int = 5000, hidden_size: int = 256):
     return model
 
 
-def generate_synthetic_responses(prompts: List[str]) -> List[str]:
+def generate_synthetic_responses(prompts: list[str]) -> list[str]:
     """
     Generate synthetic responses for demonstration.
     In real usage, this would use the actual model to generate responses.
@@ -198,8 +198,8 @@ def generate_synthetic_responses(prompts: List[str]) -> List[str]:
 
 
 def visualize_comparison(
-    baseline_metrics: Dict[str, Any],
-    finetuned_metrics: Dict[str, Any],
+    baseline_metrics: dict[str, Any],
+    finetuned_metrics: dict[str, Any],
     save_path: str = "constitutional_ai_comparison.png",
 ):
     """

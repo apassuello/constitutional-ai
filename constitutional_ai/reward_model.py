@@ -12,7 +12,7 @@ SPECIAL NOTES: Implements Component 2 of Constitutional AI - trains reward model
 import json
 import logging
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 import torch
 import torch.nn as nn
@@ -115,8 +115,8 @@ class RewardModel(nn.Module):
 
     def get_rewards(
         self,
-        prompts: List[str],
-        responses: List[str],
+        prompts: list[str],
+        responses: list[str],
         tokenizer,
         device: torch.device,
         max_length: int = 512,
@@ -200,17 +200,17 @@ def compute_reward_loss(reward_chosen: torch.Tensor, reward_rejected: torch.Tens
 
 def train_reward_model(
     reward_model: RewardModel,
-    training_data: List[Dict[str, Any]],
+    training_data: list[dict[str, Any]],
     tokenizer,
     num_epochs: int = 3,
     batch_size: int = 4,
     learning_rate: float = 1e-5,
     device: torch.device | None = None,
-    validation_data: List[Dict[str, Any]] | None = None,
+    validation_data: list[dict[str, Any]] | None = None,
     max_length: int = 512,
     gradient_accumulation_steps: int = 1,
     log_interval: int = 10,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Train reward model on preference pairs.
 
@@ -399,7 +399,7 @@ def train_reward_model(
 
 def evaluate_reward_model(
     reward_model: RewardModel,
-    evaluation_data: List[Dict[str, Any]],
+    evaluation_data: list[dict[str, Any]],
     tokenizer,
     device: torch.device,
     batch_size: int = 4,
@@ -528,14 +528,14 @@ class RewardModelTrainer:
 
     def train(
         self,
-        training_data: List[Dict[str, Any]],
+        training_data: list[dict[str, Any]],
         num_epochs: int = 3,
         validation_split: float = 0.1,
-        validation_data: List[Dict[str, Any]] | None = None,
+        validation_data: list[dict[str, Any]] | None = None,
         save_dir: str | None = None,
         save_best_only: bool = True,
         early_stopping_patience: int | None = None,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Train reward model with validation and checkpointing.
 
@@ -638,7 +638,7 @@ class RewardModelTrainer:
 
         logger.info(f"Checkpoint loaded from {path}")
 
-    def evaluate(self, evaluation_data: List[Dict[str, Any]]) -> Dict[str, float]:
+    def evaluate(self, evaluation_data: list[dict[str, Any]]) -> dict[str, float]:
         """
         Evaluate model on a dataset.
 

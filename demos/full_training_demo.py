@@ -20,7 +20,6 @@ import argparse
 import json
 import logging
 from pathlib import Path
-from typing import List
 
 import torch
 
@@ -46,7 +45,7 @@ def setup_environment():
     return device
 
 
-def load_or_generate_prompts(num_prompts: int = 50, quick_test: bool = False) -> List[str]:
+def load_or_generate_prompts(num_prompts: int = 50, quick_test: bool = False) -> list[str]:
     """
     Load or generate training prompts.
 
@@ -100,7 +99,7 @@ def load_or_generate_prompts(num_prompts: int = 50, quick_test: bool = False) ->
 
 
 def phase_1_supervised_learning(
-    prompts: List[str],
+    prompts: list[str],
     device: torch.device,
     model_name: str = "gpt2",
     num_epochs: int = 3,
@@ -230,7 +229,7 @@ def phase_1_supervised_learning(
 
 
 def phase_2_reinforcement_learning(
-    prompts: List[str],
+    prompts: list[str],
     device: torch.device,
     phase1_model: str = "gpt2",
     num_ppo_steps: int = 10,
@@ -402,7 +401,7 @@ def phase_2_reinforcement_learning(
     return phase1_model
 
 
-def evaluate_model(model_name: str, test_prompts: List[str], device: torch.device):
+def evaluate_model(model_name: str, test_prompts: list[str], device: torch.device):
     """
     Evaluate the trained model.
 

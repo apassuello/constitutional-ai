@@ -4,10 +4,8 @@ Data utilities for Constitutional AI.
 Provides helper functions for creating test prompts and managing datasets.
 """
 
-from typing import List
 
-
-def create_default_prompts() -> List[str]:
+def create_default_prompts() -> list[str]:
     """
     Create a default set of prompts for testing Constitutional AI.
 

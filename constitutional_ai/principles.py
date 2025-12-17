@@ -15,7 +15,7 @@ SPECIAL NOTES: Implements four core constitutional principles from Constitutiona
 import json
 import logging
 import re
-from typing import Any, Dict, List
+from typing import Any
 
 import torch
 from transformers import PreTrainedModel, PreTrainedTokenizer
@@ -64,7 +64,7 @@ def _debug_print(message: str, level: int = 1, prefix: str = "") -> None:
 
 
 def _print_eval_summary(
-    principle: str, flagged: bool, details: Dict[str, Any], model_name: str = "Evaluator"
+    principle: str, flagged: bool, details: dict[str, Any], model_name: str = "Evaluator"
 ) -> None:
     """Print a clean, readable evaluation summary."""
     if EVAL_DEBUG_LEVEL < 1:
@@ -333,7 +333,7 @@ Respond with a JSON object containing:
 JSON Response:"""
 
 
-def _parse_json_response(response: str, default_structure: Dict[str, Any]) -> Dict[str, Any]:
+def _parse_json_response(response: str, default_structure: dict[str, Any]) -> dict[str, Any]:
     """
     Parse JSON response from AI, with fallback to default structure.
 
@@ -417,7 +417,7 @@ def _evaluate_harm_with_ai(
     tokenizer: PreTrainedTokenizer,
     device: torch.device,
     logger=None,  # type: ignore
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Evaluate harm potential using AI-based evaluation (Constitutional AI approach).
 
@@ -476,7 +476,7 @@ def _evaluate_harm_with_ai(
         return _evaluate_harm_with_regex(text)
 
 
-def _evaluate_harm_with_regex(text: str) -> Dict[str, Any]:
+def _evaluate_harm_with_regex(text: str) -> dict[str, Any]:
     """
     Evaluate harm potential using regex-based heuristics (legacy fallback).
 
@@ -577,7 +577,7 @@ def evaluate_harm_potential(
     use_ai: bool = True,
     hybrid_mode: bool = True,  # NEW: Use regex as safety net
     logger=None,  # type: ignore
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Evaluate potential for physical, psychological or social harm.
     Implements a constitutional principle from Constitutional AI.
@@ -741,7 +741,7 @@ def _evaluate_truthfulness_with_ai(
     tokenizer: PreTrainedTokenizer,
     device: torch.device,
     logger=None,  # type: ignore
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Evaluate truthfulness using AI-based evaluation (Constitutional AI approach).
 
@@ -801,7 +801,7 @@ def _evaluate_truthfulness_with_ai(
         return _evaluate_truthfulness_with_regex(text)
 
 
-def _evaluate_truthfulness_with_regex(text: str) -> Dict[str, Any]:
+def _evaluate_truthfulness_with_regex(text: str) -> dict[str, Any]:
     """
     Evaluate truthfulness using regex-based heuristics (legacy fallback).
 
@@ -839,7 +839,7 @@ def evaluate_truthfulness(
     use_ai: bool = True,
     hybrid_mode: bool = True,
     logger=None,  # type: ignore
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Evaluate whether content is misleading or deceptive.
     Implements a constitutional principle from Constitutional AI.
@@ -897,7 +897,7 @@ def evaluate_truthfulness(
         return _evaluate_truthfulness_with_regex(text)
 
 
-def identify_unsupported_claims(text: str) -> List[str]:
+def identify_unsupported_claims(text: str) -> list[str]:
     """
     Identify claims made without supporting evidence.
 
@@ -928,7 +928,7 @@ def identify_unsupported_claims(text: str) -> List[str]:
     return unsupported_claims
 
 
-def identify_logical_contradictions(text: str) -> List[str]:
+def identify_logical_contradictions(text: str) -> list[str]:
     """
     Identify logical contradictions in the text.
 
@@ -952,7 +952,7 @@ def identify_logical_contradictions(text: str) -> List[str]:
     return contradictions
 
 
-def identify_misleading_statistics(text: str) -> List[str]:
+def identify_misleading_statistics(text: str) -> list[str]:
     """
     Identify potentially misleading statistics in the text.
 
@@ -989,7 +989,7 @@ def _evaluate_fairness_with_ai(
     tokenizer: PreTrainedTokenizer,
     device: torch.device,
     logger=None,  # type: ignore
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Evaluate fairness using AI-based evaluation (Constitutional AI approach).
 
@@ -1048,7 +1048,7 @@ def _evaluate_fairness_with_ai(
         return _evaluate_fairness_with_regex(text)
 
 
-def _evaluate_fairness_with_regex(text: str) -> Dict[str, Any]:
+def _evaluate_fairness_with_regex(text: str) -> dict[str, Any]:
     """
     Evaluate fairness using regex-based heuristics (legacy fallback).
 
@@ -1111,7 +1111,7 @@ def evaluate_fairness(
     use_ai: bool = True,
     hybrid_mode: bool = True,
     logger=None,  # type: ignore
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Evaluate whether content treats individuals and groups fairly.
     Implements a constitutional principle from Constitutional AI.
@@ -1170,7 +1170,7 @@ def _evaluate_autonomy_with_ai(
     tokenizer: PreTrainedTokenizer,
     device: torch.device,
     logger=None,  # type: ignore
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Evaluate autonomy respect using AI-based evaluation (Constitutional AI approach).
 
@@ -1229,7 +1229,7 @@ def _evaluate_autonomy_with_ai(
         return _evaluate_autonomy_with_regex(text)
 
 
-def _evaluate_autonomy_with_regex(text: str) -> Dict[str, Any]:
+def _evaluate_autonomy_with_regex(text: str) -> dict[str, Any]:
     """
     Evaluate autonomy respect using regex-based heuristics (legacy fallback).
 
@@ -1287,7 +1287,7 @@ def evaluate_autonomy_respect(
     use_ai: bool = True,
     hybrid_mode: bool = True,
     logger=None,  # type: ignore
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Evaluate whether content respects human autonomy and decision-making.
     Implements a constitutional principle from Constitutional AI.

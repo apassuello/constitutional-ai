@@ -12,7 +12,7 @@ SPECIAL NOTES: Implements full Anthropic Constitutional AI methodology
 import logging
 import os
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 import torch
 import torch.nn as nn
@@ -137,7 +137,7 @@ class ConstitutionalPipeline:
 
     def train(
         self,
-        training_prompts: List[str],
+        training_prompts: list[str],
         phase1_epochs: int = 3,
         phase1_num_revisions: int = 2,
         phase1_batch_size: int = 8,
@@ -147,10 +147,10 @@ class ConstitutionalPipeline:
         phase2_ppo_steps: int = 100,
         phase2_ppo_batch_size: int = 16,
         phase2_ppo_epochs_per_batch: int = 4,
-        validation_prompts: List[str] | None = None,
+        validation_prompts: list[str] | None = None,
         save_dir: str | None = None,
         resume_from_phase1: bool = False,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Train the model using the complete Constitutional AI pipeline.
 
@@ -275,12 +275,12 @@ class ConstitutionalPipeline:
 
     def _run_phase1(
         self,
-        prompts: List[str],
+        prompts: list[str],
         num_epochs: int,
         num_revisions: int,
         batch_size: int,
-        validation_prompts: List[str] | None = None,
-    ) -> Dict[str, Any]:
+        validation_prompts: list[str] | None = None,
+    ) -> dict[str, Any]:
         """
         Run Phase 1: Critique-Revision-Supervised Learning.
 
@@ -347,15 +347,15 @@ class ConstitutionalPipeline:
 
     def _run_phase2(
         self,
-        prompts: List[str],
+        prompts: list[str],
         num_epochs: int,
         responses_per_prompt: int,
         reward_model_epochs: int,
         ppo_steps: int,
         ppo_batch_size: int,
         ppo_epochs_per_batch: int,
-        validation_prompts: List[str] | None = None,
-    ) -> Dict[str, Any]:
+        validation_prompts: list[str] | None = None,
+    ) -> dict[str, Any]:
         """
         Run Phase 2: RLAIF with Preference Learning and PPO.
 
@@ -478,8 +478,8 @@ class ConstitutionalPipeline:
         }
 
     def evaluate_constitutional_compliance(
-        self, test_prompts: List[str], model: nn.Module | None = None
-    ) -> Dict[str, Any]:
+        self, test_prompts: list[str], model: nn.Module | None = None
+    ) -> dict[str, Any]:
         """
         Evaluate model's constitutional compliance on test prompts.
 
@@ -584,7 +584,7 @@ class ConstitutionalPipeline:
         self.training_history = checkpoint["training_history"]
         self.stats = checkpoint["stats"]
 
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Get pipeline statistics."""
         return {
             "pipeline_stats": self.stats,

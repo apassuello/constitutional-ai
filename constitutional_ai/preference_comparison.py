@@ -12,7 +12,7 @@ SPECIAL NOTES: Implements Component 3 of Constitutional AI (RLAIF Phase 2b)
 import logging
 import re
 from itertools import combinations
-from typing import Any, Dict, List
+from typing import Any
 
 import torch
 from torch.utils.data import Dataset
@@ -49,11 +49,11 @@ def generate_comparison(
     prompt: str,
     response_a: str,
     response_b: str,
-    principles: List[str],
+    principles: list[str],
     model,
     tokenizer,
     device: torch.device,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Compare two responses and determine which better follows constitutional principles.
 
@@ -212,13 +212,13 @@ def extract_preference(comparison_text: str) -> str:
 
 
 def generate_preference_pairs(
-    prompts: List[str],
+    prompts: list[str],
     model,
     tokenizer,
     framework,
     device: torch.device,
     responses_per_prompt: int = 2,
-) -> List[Dict[str, Any]]:
+) -> list[dict[str, Any]]:
     """
     Generate preference pairs for reward model training.
 
@@ -338,7 +338,7 @@ class PreferenceDataset(Dataset):
         ...     # Train reward model...
     """
 
-    def __init__(self, data: List[Dict[str, Any]], tokenizer, max_length: int = 512):
+    def __init__(self, data: list[dict[str, Any]], tokenizer, max_length: int = 512):
         """
         Initialize preference dataset.
 
@@ -355,7 +355,7 @@ class PreferenceDataset(Dataset):
         """Return number of preference pairs in dataset."""
         return len(self.data)
 
-    def __getitem__(self, idx: int) -> Dict[str, torch.Tensor]:
+    def __getitem__(self, idx: int) -> dict[str, torch.Tensor]:
         """
         Get a single preference pair.
 

@@ -10,7 +10,7 @@ constitutional evaluation with PPO-based reinforcement learning
 """
 
 import logging
-from typing import Any, Dict, List
+from typing import Any
 
 import numpy as np
 import torch
@@ -111,10 +111,10 @@ class RLAIFTrainer:
 
     def generate_training_data(
         self,
-        prompts: List[str],
+        prompts: list[str],
         num_responses_per_prompt: int = 5,
         use_tokenizer: Any | None = None,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """
         Generate training data with constitutional feedback.
 
@@ -251,7 +251,7 @@ Analysis:"""
         except Exception as e:
             return f"[Critique generation error: {str(e)}]"
 
-    def _compute_combined_score(self, evaluation: Dict[str, Any], critique: str) -> float:
+    def _compute_combined_score(self, evaluation: dict[str, Any], critique: str) -> float:
         """
         Compute combined score from constitutional evaluation and critique.
 
@@ -308,7 +308,7 @@ Analysis:"""
         # Cap at 10
         return min(severity_score, 10.0)
 
-    def _select_best_response(self, evaluations: List[Dict[str, Any]]) -> int:
+    def _select_best_response(self, evaluations: list[dict[str, Any]]) -> int:
         """
         Select the best response based on evaluations.
 
@@ -344,14 +344,14 @@ Analysis:"""
 
     def train(
         self,
-        prompts: List[str],
+        prompts: list[str],
         num_steps: int = 100,
         batch_size: int = 16,
         num_epochs_per_batch: int = 4,
         max_length: int = 150,
         tokenizer: Any | None = None,
-        validation_prompts: List[str] | None = None,
-    ) -> Dict[str, Any]:
+        validation_prompts: list[str] | None = None,
+    ) -> dict[str, Any]:
         """
         Train the policy model using constitutional AI feedback with PPO.
 
@@ -438,7 +438,7 @@ Analysis:"""
             "final_stats": self.stats,
         }
 
-    def validate(self, validation_prompts: List[str], tokenizer: Any | None = None) -> float:
+    def validate(self, validation_prompts: list[str], tokenizer: Any | None = None) -> float:
         """
         Validate model on validation prompts.
 
@@ -462,7 +462,7 @@ Analysis:"""
 
         return float(np.mean(scores))
 
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Get training statistics."""
         return {
             **self.stats,
