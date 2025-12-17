@@ -181,6 +181,10 @@ class TestCritiqueRevisionPipeline:
         self.mock_principle = Mock()
         self.mock_principle.description = "Test principle description"
         self.mock_framework.principles = {"test": self.mock_principle}
+        # Add required attributes for critique_revision_pipeline
+        self.mock_framework.model = self.mock_model
+        self.mock_framework.tokenizer = self.mock_tokenizer
+        self.mock_framework.device = self.device
 
     @patch("constitutional_ai.critique_revision.generate_critique")
     @patch("constitutional_ai.critique_revision.generate_revision")

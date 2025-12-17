@@ -250,6 +250,10 @@ def train_reward_model(
         >>> metrics = train_reward_model(reward_model, preference_data, tokenizer, num_epochs=3)
         >>> logger.info(f"Final accuracy: {metrics['accuracy'][-1]:.2%}")
     """
+    # Validate training data
+    if not training_data:
+        raise ValueError("Training data cannot be empty")
+
     # Setup device
     if device is None:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
