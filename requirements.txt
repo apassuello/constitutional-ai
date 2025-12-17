@@ -1,0 +1,5 @@
+# Core dependencies for Constitutional AI
+torch>=1.13.0
+transformers>=4.30.0
+tqdm>=4.65.0
+numpy>=1.24.0
