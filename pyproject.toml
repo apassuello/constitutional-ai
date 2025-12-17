@@ -4,12 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "constitutional-ai"
-version = "0.1.0"
-description = "A Python library for implementing Constitutional AI"
+version = "0.1.0-alpha"
+description = "Research implementation of Constitutional AI methodology"
 readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "Apache-2.0"}
-keywords = ["constitutional-ai", "ai-safety", "machine-learning", "transformers", "rlhf", "rlaif"]
+keywords = ["constitutional-ai", "ai-safety", "research", "experimental", "education"]
 authors = [
   {name = "Your Name", email = "your.email@example.com"}
 ]
@@ -18,7 +18,7 @@ maintainers = [
 ]
 classifiers = [
   "Development Status :: 3 - Alpha",
-  "Intended Audience :: Developers",
+  "Intended Audience :: Education",
   "Intended Audience :: Science/Research",
   "License :: OSI Approved :: Apache Software License",
   "Operating System :: OS Independent",
@@ -59,10 +59,9 @@ all = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/constitutional-ai"
-Documentation = "https://github.com/yourusername/constitutional-ai/blob/main/docs"
-Repository = "https://github.com/yourusername/constitutional-ai"
-"Bug Tracker" = "https://github.com/yourusername/constitutional-ai/issues"
+Homepage = "https://github.com/yourusername/constitutional-ai"  # Update with actual URL
+Repository = "https://github.com/yourusername/constitutional-ai"  # Update with actual URL
+"Bug Tracker" = "https://github.com/yourusername/constitutional-ai/issues"  # Update with actual URL
 
 [tool.setuptools]
 packages = ["constitutional_ai"]

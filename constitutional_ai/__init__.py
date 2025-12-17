@@ -1,9 +1,14 @@
 """
-Constitutional AI - A Python library for implementing Constitutional AI
+Constitutional AI - Research Implementation
 
-This library provides tools for evaluating and training language models
+A research implementation of Constitutional AI methodology for educational
+and experimental purposes.
+
+This package provides tools for evaluating and training language models
 according to constitutional principles (harm prevention, truthfulness,
 fairness, and autonomy respect).
+
+⚠️ Status: Experimental research code - not production-ready
 
 Public API:
     - ConstitutionalFramework: Manage constitutional principles
@@ -13,7 +18,7 @@ Public API:
     - Training: critique_revision_pipeline, supervised_finetune, etc.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.1.0-alpha"
 
 # Core framework
 from .framework import ConstitutionalFramework, ConstitutionalPrinciple
