@@ -4,8 +4,9 @@ A Python library for implementing **Constitutional AI** - a methodology for trai
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![CI](https://github.com/yourusername/constitutional-ai/workflows/CI/badge.svg)](https://github.com/yourusername/constitutional-ai/actions/workflows/ci.yml)
-[![Code Quality](https://github.com/yourusername/constitutional-ai/workflows/Code%20Quality/badge.svg)](https://github.com/yourusername/constitutional-ai/actions/workflows/code-quality.yml)
+[![Tests](https://github.com/yourusername/constitutional-ai/workflows/Tests/badge.svg)](https://github.com/yourusername/constitutional-ai/actions/workflows/ci.yml)
+[![Lint](https://github.com/yourusername/constitutional-ai/workflows/Lint/badge.svg)](https://github.com/yourusername/constitutional-ai/actions/workflows/code-quality.yml)
+[![Security](https://github.com/yourusername/constitutional-ai/workflows/Security/badge.svg)](https://github.com/yourusername/constitutional-ai/actions/workflows/dependency-review.yml)
 [![codecov](https://codecov.io/gh/yourusername/constitutional-ai/branch/main/graph/badge.svg)](https://codecov.io/gh/yourusername/constitutional-ai)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 

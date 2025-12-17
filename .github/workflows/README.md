@@ -4,11 +4,11 @@ This directory contains the CI/CD workflows for the Constitutional AI project.
 
 ## Workflows
 
-### 1. CI (`ci.yml`)
+### 1. Tests (`ci.yml`)
 **Triggers:** Push and Pull Requests to `main`, `master`, `develop` branches
 
 **What it does:**
-- Runs tests on Python 3.8, 3.9, 3.10, 3.11, and 3.12
+- Runs tests on Python 3.10, 3.11, and 3.12
 - Generates code coverage reports (XML, HTML, and terminal)
 - Uploads coverage to Codecov (Python 3.11 only)
 - Stores HTML coverage report as artifact (available for 30 days)
@@ -18,7 +18,7 @@ This directory contains the CI/CD workflows for the Constitutional AI project.
 - Target: 80% coverage
 - Configured in `codecov.yml`
 
-### 2. Code Quality (`code-quality.yml`)
+### 2. Lint (`code-quality.yml`)
 **Triggers:** Push and Pull Requests to `main`, `master`, `develop` branches
 
 **What it checks:**
@@ -28,7 +28,7 @@ This directory contains the CI/CD workflows for the Constitutional AI project.
 - **Ruff**: Fast Python linter with multiple rule sets
 - **MyPy**: Static type checking (currently non-blocking)
 
-### 3. Dependency Review (`dependency-review.yml`)
+### 3. Security (`dependency-review.yml`)
 **Triggers:** Pull Requests only
 
 **What it does:**
@@ -105,7 +105,8 @@ To enable Codecov:
 Update the `yourusername` placeholder in README.md with your actual GitHub username/org:
 
 ```markdown
-[![CI](https://github.com/yourusername/constitutional-ai/workflows/CI/badge.svg)](https://github.com/yourusername/constitutional-ai/actions/workflows/ci.yml)
-[![Code Quality](https://github.com/yourusername/constitutional-ai/workflows/Code%20Quality/badge.svg)](https://github.com/yourusername/constitutional-ai/actions/workflows/code-quality.yml)
+[![Tests](https://github.com/yourusername/constitutional-ai/workflows/Tests/badge.svg)](https://github.com/yourusername/constitutional-ai/actions/workflows/ci.yml)
+[![Lint](https://github.com/yourusername/constitutional-ai/workflows/Lint/badge.svg)](https://github.com/yourusername/constitutional-ai/actions/workflows/code-quality.yml)
+[![Security](https://github.com/yourusername/constitutional-ai/workflows/Security/badge.svg)](https://github.com/yourusername/constitutional-ai/actions/workflows/dependency-review.yml)
 [![codecov](https://codecov.io/gh/yourusername/constitutional-ai/branch/main/graph/badge.svg)](https://codecov.io/gh/yourusername/constitutional-ai)
 ```
