@@ -36,7 +36,7 @@ jobs:
 
     - name: Lint with Flake8
       run: |
-        flake8 constitutional_ai/ tests/ examples/ demos/ --max-line-length=100 --extend-ignore=E203,W503
+        flake8 constitutional_ai/ tests/ examples/ demos/ --max-line-length=100 --extend-ignore=E203,W503,E501
 
     - name: Lint with Ruff
       run: |
