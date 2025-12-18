@@ -67,7 +67,7 @@ def load_model(
         tokenizer.pad_token = tokenizer.eos_token
 
     # Load model
-    model_kwargs = {}
+    model_kwargs: dict[str, bool | str] = {}
     if load_in_8bit and device.type == "cuda":
         model_kwargs["load_in_8bit"] = True
         model_kwargs["device_map"] = "auto"
@@ -75,7 +75,7 @@ def load_model(
     model = AutoModelForCausalLM.from_pretrained(model_name, **model_kwargs)
 
     if not load_in_8bit:
-        model = model.to(device)
+        model = model.to(device)  # type: ignore[arg-type]
 
     logger.info("Model loaded successfully")
     logger.info(f"Parameters: {sum(p.numel() for p in model.parameters()):,}")
@@ -156,7 +156,7 @@ def generate_text(
     # Decode output
     prompt_length = inputs["input_ids"].shape[1]
     generated_ids = outputs[0][prompt_length:]  # Remove prompt
-    generated_text = tokenizer.decode(generated_ids, skip_special_tokens=True)
+    generated_text: str = tokenizer.decode(generated_ids, skip_special_tokens=True)
 
     return generated_text
 
@@ -284,6 +284,6 @@ def prepare_model_for_training(model, learning_rate: float = 5e-5, weight_decay:
     return optimizer
 
 
-def get_model_device(model) -> torch.device:
+def get_model_device(model: torch.nn.Module) -> torch.device:
     """Get the device a model is on."""
     return next(model.parameters()).device

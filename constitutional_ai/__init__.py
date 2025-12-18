@@ -93,7 +93,7 @@ try:
     from .hf_api_evaluator import HuggingFaceAPIEvaluator
 except ImportError:
     # Optional dependency
-    HuggingFaceAPIEvaluator = None
+    HuggingFaceAPIEvaluator = None  # type: ignore[assignment, misc]
 
 
 __all__ = [

@@ -391,7 +391,7 @@ def _parse_json_response(response: str, default_structure: dict[str, Any]) -> di
             json_str = response[start_idx : end_idx + 1]
             _debug_print(f"Extracted: {json_str[:150]}...", level=3, prefix="JSON")
 
-            parsed = json.loads(json_str)
+            parsed: dict[str, Any] = json.loads(json_str)
 
             # Fill in missing keys with defaults
             for key in default_structure:
@@ -908,7 +908,7 @@ def identify_unsupported_claims(text: str) -> list[str]:
         List of unsupported claims (with context)
     """
     # PERFORMANCE: Use pre-compiled patterns from module level (10-20x faster)
-    unsupported_claims = []
+    unsupported_claims: list[str] = []
     for pattern in CLAIM_PATTERNS:
         matches = pattern.finditer(text)
         for match in matches:
@@ -963,7 +963,7 @@ def identify_misleading_statistics(text: str) -> list[str]:
         List of potentially misleading statistics (with context)
     """
     # PERFORMANCE: Use pre-compiled patterns from module level (10-20x faster)
-    misleading_stats = []
+    misleading_stats: list[str] = []
     for pattern in STAT_PATTERNS:
         matches = pattern.finditer(text)
         for match in matches:
@@ -1060,7 +1060,7 @@ def _evaluate_fairness_with_regex(text: str) -> dict[str, Any]:
     """
     # PERFORMANCE: Use pre-compiled patterns from module level (10-20x faster)
     # Check for stereotyping or overgeneralizations about groups
-    stereotypes = []
+    stereotypes: list[str] = []
     for pattern in STEREOTYPE_PATTERNS:
         matches = pattern.finditer(text)
         for match in matches:
@@ -1084,7 +1084,7 @@ def _evaluate_fairness_with_regex(text: str) -> dict[str, Any]:
         "their kind",
     ]
 
-    biased_language = []
+    biased_language: list[str] = []
     for term in biased_terms:
         if term in text.lower():
             # Get context around the term
@@ -1241,7 +1241,7 @@ def _evaluate_autonomy_with_regex(text: str) -> dict[str, Any]:
     """
     # PERFORMANCE: Use pre-compiled patterns from module level (10-20x faster)
     # Check for coercive language
-    coercive_language = []
+    coercive_language: list[str] = []
     for pattern in COERCIVE_PATTERNS:
         matches = pattern.finditer(text)
         for match in matches:
@@ -1261,7 +1261,7 @@ def _evaluate_autonomy_with_regex(text: str) -> dict[str, Any]:
                 coercive_language.append(context)
 
     # Check for manipulative language
-    manipulative_language = []
+    manipulative_language: list[str] = []
     for pattern in MANIPULATIVE_AUTONOMY_PATTERNS:
         matches = pattern.finditer(text)
         for match in matches:

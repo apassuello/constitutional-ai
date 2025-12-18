@@ -76,7 +76,7 @@ class ConstitutionalSafetyFilter:
 
         # First, perform base safety validation if available
         is_safe = True
-        validation_info = {
+        validation_info: dict[str, Any] = {
             "is_safe": True,
             "constitutional_evaluation": None,
             "flagged_principles": [],
@@ -132,7 +132,7 @@ class ConstitutionalSafetyFilter:
         self.stats["outputs_filtered"] += 1
 
         filtered_text = output_text
-        filtering_info = {
+        filtering_info: dict[str, Any] = {
             "was_filtered": False,
             "constitutional_evaluation": None,
             "transformations_applied": [],
