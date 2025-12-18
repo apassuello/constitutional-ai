@@ -846,9 +846,7 @@ class TestSetupDefaultFramework:
         """Test that framework passes clean text."""
         framework = setup_default_framework()
 
-        result = framework.evaluate_text(
-            "The sky is blue today."
-        )
+        result = framework.evaluate_text("The sky is blue today.")
 
         assert result["any_flagged"] is False
 

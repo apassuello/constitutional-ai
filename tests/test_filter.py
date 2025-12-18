@@ -421,7 +421,10 @@ class TestTruthfulnessFiltering:
         text = "Original text here."
         filtered = filter_instance._add_truthfulness_qualifiers(text, evaluation)
 
-        assert "Please note: There may be some inconsistencies in the information provided above" in filtered
+        assert (
+            "Please note: There may be some inconsistencies in the information provided above"
+            in filtered
+        )
 
     def test_misleading_statistics_adds_note(self):
         """Test note added for >1 misleading statistics."""
@@ -788,7 +791,9 @@ class TestIntegrationScenarios:
         """Test complete truthfulness filtering flow."""
         filter_instance = ConstitutionalSafetyFilter()
 
-        text = "All people always do this. Every person definitely agrees. None disagree. Always true."
+        text = (
+            "All people always do this. Every person definitely agrees. None disagree. Always true."
+        )
 
         # Should be flagged
         is_safe, _ = filter_instance.validate_input(text)

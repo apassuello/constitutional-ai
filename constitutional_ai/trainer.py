@@ -265,7 +265,9 @@ Analysis:"""
             Combined score (lower is better)
         """
         # Constitutional score (weighted sum of violations)
-        constitutional_score: float = evaluation.get("direct_evaluation", {}).get("weighted_score", 0.0)
+        constitutional_score: float = evaluation.get("direct_evaluation", {}).get(
+            "weighted_score", 0.0
+        )
 
         # Critique score (based on negative terms)
         critique_score: float = self._extract_score_from_critique(critique)
