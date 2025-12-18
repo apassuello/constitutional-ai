@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 try:
     import torch
 except ImportError:
-    torch = None  # Allow framework to work without torch for testing
+    torch = None  # type: ignore[assignment]  # Allow framework to work without torch for testing
 
 
 class ConstitutionalPrinciple:
@@ -98,12 +98,12 @@ class ConstitutionalPrinciple:
         # Call evaluation function with appropriate parameters
         if "logger" in params:
             # Function supports content logging
-            result = self.evaluation_fn(
+            result = self.evaluation_fn(  # type: ignore[call-arg]
                 text, model=model, tokenizer=tokenizer, device=device, logger=logger
             )
         elif "model" in params or "tokenizer" in params or "device" in params:
             # New-style function that accepts model parameters (without logger)
-            result = self.evaluation_fn(text, model=model, tokenizer=tokenizer, device=device)
+            result = self.evaluation_fn(text, model=model, tokenizer=tokenizer, device=device)  # type: ignore[call-arg]
         else:
             # Old-style function that only accepts text (backward compatibility)
             result = self.evaluation_fn(text)
@@ -168,7 +168,7 @@ class ConstitutionalFramework:
 
         # HuggingFace API configuration
         self._use_hf_api = use_hf_api
-        self._hf_api_evaluator = None
+        self._hf_api_evaluator: Any = None  # HuggingFaceAPIEvaluator | None
         self._hf_api_token = hf_api_token
 
         if use_hf_api:
@@ -218,7 +218,8 @@ class ConstitutionalFramework:
         if self.model is None:
             return "Regex (no model)"
         if hasattr(self.model, "config") and hasattr(self.model.config, "name_or_path"):
-            return self.model.config.name_or_path.split("/")[-1]
+            model_name: str = self.model.config.name_or_path.split("/")[-1]
+            return model_name
         return "Unknown Model"
 
     def use_regex_only(self) -> None:
