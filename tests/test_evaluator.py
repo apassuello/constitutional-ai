@@ -50,9 +50,7 @@ class TestConstitutionalSafetyEvaluatorInit:
         """Test initialization with critique model."""
         mock_model = Mock(spec=nn.Module)
 
-        evaluator = ConstitutionalSafetyEvaluator(
-            critique_model=mock_model, use_self_critique=True
-        )
+        evaluator = ConstitutionalSafetyEvaluator(critique_model=mock_model, use_self_critique=True)
 
         assert evaluator.critique_model is mock_model
         assert evaluator.use_self_critique is True
@@ -61,17 +59,13 @@ class TestConstitutionalSafetyEvaluatorInit:
         """Test use_self_critique enabled only if model provided."""
         mock_model = Mock(spec=nn.Module)
 
-        evaluator = ConstitutionalSafetyEvaluator(
-            critique_model=mock_model, use_self_critique=True
-        )
+        evaluator = ConstitutionalSafetyEvaluator(critique_model=mock_model, use_self_critique=True)
 
         assert evaluator.use_self_critique is True
 
     def test_init_use_self_critique_logic_disabled_no_model(self):
         """Test use_self_critique disabled when no model provided."""
-        evaluator = ConstitutionalSafetyEvaluator(
-            critique_model=None, use_self_critique=True
-        )
+        evaluator = ConstitutionalSafetyEvaluator(critique_model=None, use_self_critique=True)
 
         # use_self_critique should be False even though requested
         assert evaluator.use_self_critique is False
@@ -574,9 +568,7 @@ class TestGenerateImprovedResponse:
                 {"flagged": False},
             ]
 
-            with patch.object(
-                evaluator, "_create_improvement_prompt"
-            ) as mock_create_prompt:
+            with patch.object(evaluator, "_create_improvement_prompt") as mock_create_prompt:
                 mock_create_prompt.return_value = "Improve this"
 
                 with patch.object(evaluator, "_generate_improvement") as mock_improve:
@@ -980,9 +972,7 @@ class TestCritiqueIndicatesIssuesFunction:
 
     def test_multiple_concern_phrases(self):
         """Test with multiple concern phrases."""
-        critique = (
-            "This is harmful, biased, misleading, and violates multiple principles."
-        )
+        critique = "This is harmful, biased, misleading, and violates multiple principles."
 
         assert critique_indicates_issues(critique) is True
 

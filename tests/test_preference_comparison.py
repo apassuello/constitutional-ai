@@ -144,10 +144,7 @@ class TestExtractPreference:
     # Pattern 8: Negative mentions count
     def test_pattern8_a_has_more_negatives_prefers_b(self):
         """Test Pattern 8: A has more negative terms, so prefer B"""
-        text = (
-            "Response A is poor, inaccurate, and unhelpful. It's unclear. "
-            "Response B is fine."
-        )
+        text = "Response A is poor, inaccurate, and unhelpful. It's unclear. " "Response B is fine."
         assert extract_preference(text) == "B"
 
     def test_pattern8_b_has_more_negatives_prefers_a(self):
@@ -227,11 +224,10 @@ class TestGenerateComparison:
         self, mock_model, mock_tokenizer, device, sample_principles
     ):
         """Test basic comparison returning preference 'A'"""
-        with patch(
-            "constitutional_ai.model_utils.generate_text"
-        ) as mock_generate, patch(
-            "constitutional_ai.preference_comparison.extract_preference"
-        ) as mock_extract:
+        with (
+            patch("constitutional_ai.model_utils.generate_text") as mock_generate,
+            patch("constitutional_ai.preference_comparison.extract_preference") as mock_extract,
+        ):
             # Mock generate_text to return comparison text
             mock_generate.return_value = "Response A is better because it's more accurate."
             # Mock extract_preference to return 'A'
@@ -262,11 +258,10 @@ class TestGenerateComparison:
         self, mock_model, mock_tokenizer, device, sample_principles
     ):
         """Test basic comparison returning preference 'B'"""
-        with patch(
-            "constitutional_ai.model_utils.generate_text"
-        ) as mock_generate, patch(
-            "constitutional_ai.preference_comparison.extract_preference"
-        ) as mock_extract:
+        with (
+            patch("constitutional_ai.model_utils.generate_text") as mock_generate,
+            patch("constitutional_ai.preference_comparison.extract_preference") as mock_extract,
+        ):
             mock_generate.return_value = "Response B is superior."
             mock_extract.return_value = "B"
 
@@ -295,11 +290,10 @@ class TestGenerateComparison:
             "Respect autonomy",
         ]
 
-        with patch(
-            "constitutional_ai.model_utils.generate_text"
-        ) as mock_generate, patch(
-            "constitutional_ai.preference_comparison.extract_preference"
-        ) as mock_extract:
+        with (
+            patch("constitutional_ai.model_utils.generate_text") as mock_generate,
+            patch("constitutional_ai.preference_comparison.extract_preference") as mock_extract,
+        ):
             mock_generate.return_value = "A is better"
             mock_extract.return_value = "A"
 
@@ -319,13 +313,14 @@ class TestGenerateComparison:
             for i, principle in enumerate(principles, 1):
                 assert f"{i}. {principle}" in prompt_text
 
-    def test_return_dictionary_structure(self, mock_model, mock_tokenizer, device, sample_principles):
+    def test_return_dictionary_structure(
+        self, mock_model, mock_tokenizer, device, sample_principles
+    ):
         """Test that return dictionary has all required keys"""
-        with patch(
-            "constitutional_ai.model_utils.generate_text"
-        ) as mock_generate, patch(
-            "constitutional_ai.preference_comparison.extract_preference"
-        ) as mock_extract:
+        with (
+            patch("constitutional_ai.model_utils.generate_text") as mock_generate,
+            patch("constitutional_ai.preference_comparison.extract_preference") as mock_extract,
+        ):
             mock_generate.return_value = "Comparison text"
             mock_extract.return_value = "A"
 
@@ -351,15 +346,15 @@ class TestGenerateComparison:
             assert isinstance(result["response_chosen"], str)
             assert isinstance(result["response_rejected"], str)
 
-    def test_generation_config_parameters(self, mock_model, mock_tokenizer, device, sample_principles):
+    def test_generation_config_parameters(
+        self, mock_model, mock_tokenizer, device, sample_principles
+    ):
         """Test that GenerationConfig is created with correct parameters"""
-        with patch(
-            "constitutional_ai.model_utils.generate_text"
-        ) as mock_generate, patch(
-            "constitutional_ai.preference_comparison.extract_preference"
-        ) as mock_extract, patch(
-            "constitutional_ai.model_utils.GenerationConfig"
-        ) as mock_config:
+        with (
+            patch("constitutional_ai.model_utils.generate_text") as mock_generate,
+            patch("constitutional_ai.preference_comparison.extract_preference") as mock_extract,
+            patch("constitutional_ai.model_utils.GenerationConfig") as mock_config,
+        ):
             mock_generate.return_value = "Text"
             mock_extract.return_value = "A"
 
@@ -380,11 +375,10 @@ class TestGenerateComparison:
         """Test that comparison template includes all required elements"""
         principles = ["Be helpful"]
 
-        with patch(
-            "constitutional_ai.model_utils.generate_text"
-        ) as mock_generate, patch(
-            "constitutional_ai.preference_comparison.extract_preference"
-        ) as mock_extract:
+        with (
+            patch("constitutional_ai.model_utils.generate_text") as mock_generate,
+            patch("constitutional_ai.preference_comparison.extract_preference") as mock_extract,
+        ):
             mock_generate.return_value = "A is better"
             mock_extract.return_value = "A"
 
@@ -440,15 +434,12 @@ class TestGeneratePreferencePairs:
         """Get device for testing."""
         return torch.device("cpu")
 
-    def test_single_prompt_two_responses(
-        self, mock_model, mock_tokenizer, mock_framework, device
-    ):
+    def test_single_prompt_two_responses(self, mock_model, mock_tokenizer, mock_framework, device):
         """Test with single prompt, responses_per_prompt=2 (generates 1 comparison)"""
-        with patch(
-            "constitutional_ai.model_utils.generate_text"
-        ) as mock_generate, patch(
-            "constitutional_ai.preference_comparison.generate_comparison"
-        ) as mock_compare:
+        with (
+            patch("constitutional_ai.model_utils.generate_text") as mock_generate,
+            patch("constitutional_ai.preference_comparison.generate_comparison") as mock_compare,
+        ):
             # Mock response generation
             mock_generate.side_effect = ["Response 1", "Response 2"]
 
@@ -480,11 +471,10 @@ class TestGeneratePreferencePairs:
         """Test with multiple prompts (verify all processed)"""
         prompts = ["What is AI?", "Explain gravity", "What is ML?"]
 
-        with patch(
-            "constitutional_ai.model_utils.generate_text"
-        ) as mock_generate, patch(
-            "constitutional_ai.preference_comparison.generate_comparison"
-        ) as mock_compare:
+        with (
+            patch("constitutional_ai.model_utils.generate_text") as mock_generate,
+            patch("constitutional_ai.preference_comparison.generate_comparison") as mock_compare,
+        ):
             # Mock 2 responses per prompt (6 total)
             mock_generate.side_effect = ["R1", "R2", "R3", "R4", "R5", "R6"]
 
@@ -529,11 +519,10 @@ class TestGeneratePreferencePairs:
         self, mock_model, mock_tokenizer, mock_framework, device
     ):
         """Test with responses_per_prompt=3 (should generate C(3,2)=3 comparisons)"""
-        with patch(
-            "constitutional_ai.model_utils.generate_text"
-        ) as mock_generate, patch(
-            "constitutional_ai.preference_comparison.generate_comparison"
-        ) as mock_compare:
+        with (
+            patch("constitutional_ai.model_utils.generate_text") as mock_generate,
+            patch("constitutional_ai.preference_comparison.generate_comparison") as mock_compare,
+        ):
             # Mock 3 responses for the prompt
             mock_generate.side_effect = ["R1", "R2", "R3"]
 
@@ -583,13 +572,11 @@ class TestGeneratePreferencePairs:
         """Test error handling for failed comparisons (should continue processing)"""
         prompts = ["Prompt 1", "Prompt 2", "Prompt 3"]
 
-        with patch(
-            "constitutional_ai.model_utils.generate_text"
-        ) as mock_generate, patch(
-            "constitutional_ai.preference_comparison.generate_comparison"
-        ) as mock_compare, patch(
-            "constitutional_ai.preference_comparison.logger"
-        ) as mock_logger:
+        with (
+            patch("constitutional_ai.model_utils.generate_text") as mock_generate,
+            patch("constitutional_ai.preference_comparison.generate_comparison") as mock_compare,
+            patch("constitutional_ai.preference_comparison.logger") as mock_logger,
+        ):
             # Mock responses (2 per prompt)
             mock_generate.side_effect = ["R1", "R2", "R3", "R4", "R5", "R6"]
 
@@ -631,11 +618,10 @@ class TestGeneratePreferencePairs:
 
     def test_return_structure(self, mock_model, mock_tokenizer, mock_framework, device):
         """Test return structure: list of dicts with correct keys"""
-        with patch(
-            "constitutional_ai.model_utils.generate_text"
-        ) as mock_generate, patch(
-            "constitutional_ai.preference_comparison.generate_comparison"
-        ) as mock_compare:
+        with (
+            patch("constitutional_ai.model_utils.generate_text") as mock_generate,
+            patch("constitutional_ai.preference_comparison.generate_comparison") as mock_compare,
+        ):
             mock_generate.side_effect = ["R1", "R2"]
             mock_compare.return_value = {
                 "preferred": "A",
@@ -673,13 +659,11 @@ class TestGeneratePreferencePairs:
         self, mock_model, mock_tokenizer, mock_framework, device
     ):
         """Test that responses use high temperature for diversity"""
-        with patch(
-            "constitutional_ai.model_utils.generate_text"
-        ) as mock_generate, patch(
-            "constitutional_ai.preference_comparison.generate_comparison"
-        ) as mock_compare, patch(
-            "constitutional_ai.model_utils.GenerationConfig"
-        ) as mock_config:
+        with (
+            patch("constitutional_ai.model_utils.generate_text") as mock_generate,
+            patch("constitutional_ai.preference_comparison.generate_comparison") as mock_compare,
+            patch("constitutional_ai.model_utils.GenerationConfig") as mock_config,
+        ):
             mock_generate.side_effect = ["R1", "R2"]
             mock_compare.return_value = {
                 "preferred": "A",
@@ -704,11 +688,10 @@ class TestGeneratePreferencePairs:
         self, mock_model, mock_tokenizer, mock_framework, device
     ):
         """Test that principles are correctly extracted from framework"""
-        with patch(
-            "constitutional_ai.model_utils.generate_text"
-        ) as mock_generate, patch(
-            "constitutional_ai.preference_comparison.generate_comparison"
-        ) as mock_compare:
+        with (
+            patch("constitutional_ai.model_utils.generate_text") as mock_generate,
+            patch("constitutional_ai.preference_comparison.generate_comparison") as mock_compare,
+        ):
             mock_generate.side_effect = ["R1", "R2"]
             mock_compare.return_value = {
                 "preferred": "A",
@@ -736,11 +719,10 @@ class TestGeneratePreferencePairs:
         """Test that tqdm is used when available"""
         # tqdm is imported inside the function, so we need to mock it differently
         # We'll skip detailed tqdm testing since it's just a progress bar
-        with patch(
-            "constitutional_ai.model_utils.generate_text"
-        ) as mock_generate, patch(
-            "constitutional_ai.preference_comparison.generate_comparison"
-        ) as mock_compare:
+        with (
+            patch("constitutional_ai.model_utils.generate_text") as mock_generate,
+            patch("constitutional_ai.preference_comparison.generate_comparison") as mock_compare,
+        ):
             mock_generate.side_effect = ["R1", "R2"]
             mock_compare.return_value = {
                 "preferred": "A",
@@ -767,11 +749,10 @@ class TestGeneratePreferencePairs:
         """Test that function works without tqdm - simplified test"""
         # Since tqdm is imported dynamically and just provides progress bar,
         # we'll test that the function works normally
-        with patch(
-            "constitutional_ai.model_utils.generate_text"
-        ) as mock_generate, patch(
-            "constitutional_ai.preference_comparison.generate_comparison"
-        ) as mock_compare:
+        with (
+            patch("constitutional_ai.model_utils.generate_text") as mock_generate,
+            patch("constitutional_ai.preference_comparison.generate_comparison") as mock_compare,
+        ):
             mock_generate.side_effect = ["R1", "R2"]
             mock_compare.return_value = {
                 "preferred": "A",
@@ -806,15 +787,12 @@ class TestGeneratePreferencePairs:
         # Should return empty list
         assert result == []
 
-    def test_combinations_correctness(
-        self, mock_model, mock_tokenizer, mock_framework, device
-    ):
+    def test_combinations_correctness(self, mock_model, mock_tokenizer, mock_framework, device):
         """Test that combinations() produces correct number of pairs"""
-        with patch(
-            "constitutional_ai.model_utils.generate_text"
-        ) as mock_generate, patch(
-            "constitutional_ai.preference_comparison.generate_comparison"
-        ) as mock_compare:
+        with (
+            patch("constitutional_ai.model_utils.generate_text") as mock_generate,
+            patch("constitutional_ai.preference_comparison.generate_comparison") as mock_compare,
+        ):
             # Generate 4 responses
             mock_generate.side_effect = ["R1", "R2", "R3", "R4"]
 
@@ -880,11 +858,10 @@ class TestEdgeCases:
         mock_tokenizer = MagicMock()
         device = torch.device("cpu")
 
-        with patch(
-            "constitutional_ai.model_utils.generate_text"
-        ) as mock_generate, patch(
-            "constitutional_ai.preference_comparison.extract_preference"
-        ) as mock_extract:
+        with (
+            patch("constitutional_ai.model_utils.generate_text") as mock_generate,
+            patch("constitutional_ai.preference_comparison.extract_preference") as mock_extract,
+        ):
             mock_generate.return_value = "A is better"
             mock_extract.return_value = "A"
 
