@@ -46,10 +46,10 @@ pip install -e .
 ```
 
 **Requirements:**
-- Python 3.8+
+- Python 3.10+
 - PyTorch 1.13+
 - Transformers 4.30+
-- See `requirements.txt` for full list
+- See `pyproject.toml` for full dependency list
 
 ---
 
