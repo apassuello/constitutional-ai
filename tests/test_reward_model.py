@@ -62,23 +62,23 @@ def sample_preference_data():
     return [
         {
             "prompt": "What is photosynthesis?",
-            "chosen": "Photosynthesis is the process by which plants convert sunlight, water, and CO2 into glucose and oxygen.",
-            "rejected": "Plants make food.",
+            "response_chosen": "Photosynthesis is the process by which plants convert sunlight, water, and CO2 into glucose and oxygen.",
+            "response_rejected": "Plants make food.",
         },
         {
             "prompt": "Explain gravity.",
-            "chosen": "Gravity is a fundamental force that attracts objects with mass toward each other.",
-            "rejected": "Things fall down.",
+            "response_chosen": "Gravity is a fundamental force that attracts objects with mass toward each other.",
+            "response_rejected": "Things fall down.",
         },
         {
             "prompt": "What is machine learning?",
-            "chosen": "Machine learning is a field of AI where computers learn patterns from data without explicit programming.",
-            "rejected": "Computers learning stuff.",
+            "response_chosen": "Machine learning is a field of AI where computers learn patterns from data without explicit programming.",
+            "response_rejected": "Computers learning stuff.",
         },
         {
             "prompt": "How does the internet work?",
-            "chosen": "The internet works by connecting computers globally through protocols like TCP/IP.",
-            "rejected": "Magic wires.",
+            "response_chosen": "The internet works by connecting computers globally through protocols like TCP/IP.",
+            "response_rejected": "Magic wires.",
         },
     ]
 
@@ -536,8 +536,8 @@ class TestEdgeCases:
         preference_data = [
             {
                 "prompt": "Test prompt",
-                "chosen": long_text,
-                "rejected": "Short response",
+                "response_chosen": long_text,
+                "response_rejected": "Short response",
             }
         ]
 

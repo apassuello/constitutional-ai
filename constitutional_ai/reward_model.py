@@ -304,10 +304,10 @@ def train_reward_model(
             batch = training_data[i : i + batch_size]
 
             # Prepare texts for chosen responses
-            chosen_texts = [item["prompt"] + " " + item["chosen"] for item in batch]
+            chosen_texts = [item["prompt"] + " " + item["response_chosen"] for item in batch]
 
             # Prepare texts for rejected responses
-            rejected_texts = [item["prompt"] + " " + item["rejected"] for item in batch]
+            rejected_texts = [item["prompt"] + " " + item["response_rejected"] for item in batch]
 
             # Tokenize chosen responses
             chosen_encodings = tokenizer(
@@ -434,8 +434,8 @@ def evaluate_reward_model(
             batch = evaluation_data[i : i + batch_size]
 
             # Prepare texts
-            chosen_texts = [item["prompt"] + " " + item["chosen"] for item in batch]
-            rejected_texts = [item["prompt"] + " " + item["rejected"] for item in batch]
+            chosen_texts = [item["prompt"] + " " + item["response_chosen"] for item in batch]
+            rejected_texts = [item["prompt"] + " " + item["response_rejected"] for item in batch]
 
             # Tokenize
             chosen_encodings = tokenizer(

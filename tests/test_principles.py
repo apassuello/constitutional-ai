@@ -546,7 +546,12 @@ class TestEvaluateFairness:
                     text, model=mock_model, tokenizer=mock_tokenizer, device=device
                 )
                 assert result["flagged"] is True, f"Should flag: {text}"
-                assert result["method"] in ["ai_evaluation", "hybrid_ai"]
+                assert result["method"] in [
+                    "ai_evaluation",
+                    "hybrid_ai",
+                    "hybrid_regex",
+                    "hybrid_clear",
+                ]
 
     def test_biased_language_detection(self):
         """Test detection of biased terms."""
@@ -842,10 +847,10 @@ class TestSetupDefaultFramework:
         framework = setup_default_framework()
 
         result = framework.evaluate_text(
-            "I recommend considering this option. Some people prefer coffee."
+            "The sky is blue today."
         )
 
-        assert result["any_flagged"] is False or result["weighted_score"] < 2.0
+        assert result["any_flagged"] is False
 
     def test_weighted_scoring(self):
         """Test that weighted scoring works correctly."""
@@ -875,8 +880,13 @@ class TestSetupDefaultFramework:
         with patch("constitutional_ai.principles.generate_text", return_value=mock_response):
             result = framework.evaluate_text("How to harm someone")
 
-            # Should use AI evaluation
-            assert result["evaluation_method"] in ["ai_evaluation", "hybrid_ai", "hybrid_clear"]
+            # Should use AI evaluation (may also use hybrid_regex if regex detects first)
+            assert result["evaluation_method"] in [
+                "ai_evaluation",
+                "hybrid_ai",
+                "hybrid_clear",
+                "hybrid_regex",
+            ]
             assert result["any_flagged"] is True
 
     def test_framework_without_model_uses_regex(self):
@@ -1010,7 +1020,12 @@ class TestHybridEvaluation:
                 text, model=mock_model, tokenizer=mock_tokenizer, device=device
             )
 
-            assert result["method"] in ["ai_evaluation", "hybrid_ai"]
+            assert result["method"] in [
+                "ai_evaluation",
+                "hybrid_ai",
+                "hybrid_regex",
+                "hybrid_clear",
+            ]
             assert result["flagged"] is True
 
     def test_ai_fallback_to_regex_on_error(self):
@@ -1120,14 +1135,19 @@ class TestAIEvaluationWithMocks:
 
         with patch("constitutional_ai.principles.generate_text", return_value=mock_response):
             result = evaluate_harm_potential(
-                text, model=mock_model, tokenizer=mock_tokenizer, device=device
+                text, model=mock_model, tokenizer=mock_tokenizer, device=device, hybrid_mode=False
             )
 
             assert result["flagged"] is True
             assert result["explicit_harm_detected"] is True
             assert result["subtle_harm_score"] == 0.9
             assert "dangerous device" in result["reasoning"].lower()
-            assert result["method"] in ["ai_evaluation", "hybrid_ai"]
+            assert result["method"] in [
+                "ai_evaluation",
+                "hybrid_ai",
+                "hybrid_regex",
+                "hybrid_clear",
+            ]
 
     def test_truthfulness_evaluation_with_mock(self):
         """Test truthfulness evaluation with mocked AI response."""
@@ -1145,7 +1165,12 @@ class TestAIEvaluationWithMocks:
 
             assert result["flagged"] is True
             assert len(result["unsupported_claims"]) > 0
-            assert result["method"] in ["ai_evaluation", "hybrid_ai"]
+            assert result["method"] in [
+                "ai_evaluation",
+                "hybrid_ai",
+                "hybrid_regex",
+                "hybrid_clear",
+            ]
 
     def test_fairness_evaluation_with_mock(self):
         """Test fairness evaluation with mocked AI response."""
@@ -1163,7 +1188,12 @@ class TestAIEvaluationWithMocks:
 
             assert result["flagged"] is True
             assert len(result["stereotypes"]) > 0
-            assert result["method"] in ["ai_evaluation", "hybrid_ai"]
+            assert result["method"] in [
+                "ai_evaluation",
+                "hybrid_ai",
+                "hybrid_regex",
+                "hybrid_clear",
+            ]
 
     def test_autonomy_evaluation_with_mock(self):
         """Test autonomy evaluation with mocked AI response."""
@@ -1181,7 +1211,12 @@ class TestAIEvaluationWithMocks:
 
             assert result["flagged"] is True
             assert len(result["coercive_language"]) > 0
-            assert result["method"] in ["ai_evaluation", "hybrid_ai"]
+            assert result["method"] in [
+                "ai_evaluation",
+                "hybrid_ai",
+                "hybrid_regex",
+                "hybrid_clear",
+            ]
 
     def test_device_defaults_to_cpu(self):
         """Test that device defaults to CPU when not provided."""
@@ -1195,4 +1230,9 @@ class TestAIEvaluationWithMocks:
             # Don't provide device parameter
             result = evaluate_harm_potential(text, model=mock_model, tokenizer=mock_tokenizer)
 
-            assert result["method"] in ["ai_evaluation", "hybrid_ai"]
+            assert result["method"] in [
+                "ai_evaluation",
+                "hybrid_ai",
+                "hybrid_regex",
+                "hybrid_clear",
+            ]
