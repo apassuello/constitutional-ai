@@ -265,13 +265,13 @@ Analysis:"""
             Combined score (lower is better)
         """
         # Constitutional score (weighted sum of violations)
-        constitutional_score = evaluation.get("direct_evaluation", {}).get("weighted_score", 0.0)
+        constitutional_score: float = evaluation.get("direct_evaluation", {}).get("weighted_score", 0.0)
 
         # Critique score (based on negative terms)
-        critique_score = self._extract_score_from_critique(critique)
+        critique_score: float = self._extract_score_from_critique(critique)
 
         # Combine scores (could use more sophisticated weighting)
-        combined = constitutional_score + (critique_score * 0.5)
+        combined: float = constitutional_score + (critique_score * 0.5)
 
         return combined
 
@@ -332,8 +332,8 @@ Analysis:"""
         if self.ppo_trainer is None:
             self.ppo_trainer = PPOTrainer(
                 policy_model=self.policy_model,
-                value_model=self.value_model,
-                reward_model=self.reward_model,
+                value_model=self.value_model,  # type: ignore[arg-type]
+                reward_model=self.reward_model,  # type: ignore[arg-type]
                 tokenizer=tokenizer,
                 device=self.device,
                 learning_rate=self.learning_rate,
@@ -394,6 +394,7 @@ Analysis:"""
 
         # Run PPO training
         logger.info("Starting PPO optimization with constitutional reward model...")
+        assert self.ppo_trainer is not None, "PPO trainer should be initialized"
         ppo_results = self.ppo_trainer.train(
             prompts=prompts,
             num_steps=num_steps,
