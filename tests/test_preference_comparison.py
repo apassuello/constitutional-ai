@@ -10,7 +10,7 @@ Tests cover:
 Note: PreferenceDataset tests are in test_reward_model.py (already 100% coverage)
 """
 
-from unittest.mock import MagicMock, Mock, patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 import torch
@@ -303,7 +303,7 @@ class TestGenerateComparison:
             mock_generate.return_value = "A is better"
             mock_extract.return_value = "A"
 
-            result = generate_comparison(
+            generate_comparison(
                 prompt="Test",
                 response_a="Response A",
                 response_b="Response B",

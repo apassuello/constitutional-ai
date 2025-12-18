@@ -7,8 +7,6 @@ Tests the ConstitutionalSafetyEvaluator class with two-stage evaluation:
 
 from unittest.mock import Mock, patch
 
-import pytest
-import torch
 import torch.nn as nn
 
 from constitutional_ai.evaluator import (
