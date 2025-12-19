@@ -5,10 +5,8 @@ Handles loading, state management, and lifecycle of models.
 Supports both baseline models and pre-trained constitutional models.
 """
 
-import os
 from enum import Enum
 from pathlib import Path
-from typing import Optional, Tuple
 
 import torch
 from transformers import PreTrainedModel, PreTrainedTokenizer
@@ -34,15 +32,23 @@ class ModelManager:
     """
 
     def __init__(self):
-        self.model: Optional[PreTrainedModel] = None
-        self.tokenizer: Optional[PreTrainedTokenizer] = None
-        self.model_name: Optional[str] = None
-        self.model_type: Optional[str] = None  # 'baseline' or 'constitutional'
+        self.model: PreTrainedModel | None = None
+        self.tokenizer: PreTrainedTokenizer | None = None
+        self.model_name: str | None = None
+        self.model_type: str | None = None  # 'baseline' or 'constitutional'
         self.status = ModelStatus.NOT_LOADED
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.error_message: Optional[str] = None
 
-    def load_baseline(self, model_name: str) -> Tuple[bool, str]:
+        # Priority: CUDA > MPS (Apple Silicon) > CPU
+        if torch.cuda.is_available():
+            self.device = torch.device("cuda")
+        elif torch.backends.mps.is_available():
+            self.device = torch.device("mps")
+        else:
+            self.device = torch.device("cpu")
+
+        self.error_message: str | None = None
+
+    def load_baseline(self, model_name: str) -> tuple[bool, str]:
         """
         Load a baseline (untrained) model.
 
@@ -70,7 +76,7 @@ class ModelManager:
             self.error_message = str(e)
             return False, f"❌ Error loading model: {e}"
 
-    def load_constitutional(self, checkpoint_path: str) -> Tuple[bool, str]:
+    def load_constitutional(self, checkpoint_path: str) -> tuple[bool, str]:
         """
         Load a pre-trained constitutional AI model from checkpoint.
 
@@ -146,7 +152,7 @@ class ModelManager:
             "error": self.error_message,
         }
 
-    def get_model(self) -> Tuple[PreTrainedModel, PreTrainedTokenizer]:
+    def get_model(self) -> tuple[PreTrainedModel, PreTrainedTokenizer]:
         """
         Get the current model and tokenizer.
 

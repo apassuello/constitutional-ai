@@ -49,11 +49,7 @@ from .filter import ConstitutionalSafetyFilter
 from .framework import ConstitutionalFramework, ConstitutionalPrinciple
 
 # Model utilities
-from .model_utils import (
-    GenerationConfig,
-    generate_text,
-    load_model,
-)
+from .model_utils import GenerationConfig, generate_text, load_model
 
 # End-to-end pipeline
 from .pipeline import ConstitutionalPipeline
@@ -78,12 +74,7 @@ from .principles import (
 )
 
 # Phase 2b: Reward Model
-from .reward_model import (
-    RewardModel,
-    RewardModelTrainer,
-    compute_reward_loss,
-    train_reward_model,
-)
+from .reward_model import RewardModel, RewardModelTrainer, compute_reward_loss, train_reward_model
 
 # RLAIF Trainer
 from .trainer import RLAIFTrainer

@@ -15,30 +15,30 @@ Usage:
 """
 
 import gradio as gr
+from demo_utils.examples import get_example_prompts, get_training_config
+from demo_utils.formatters import (
+    format_comparison_result,
+    format_comparison_table,
+    format_evaluation_result,
+    format_filter_result,
+    format_model_info,
+)
+from demo_utils.model_manager import ModelManager
+from demo_utils.training_handler import train_model_live
+from demo_utils.visualizations import (
+    create_comparison_chart,
+    create_improvement_chart,
+    create_principle_bar_chart,
+    create_radar_chart,
+)
+
 from constitutional_ai import (
     ConstitutionalSafetyEvaluator,
     ConstitutionalSafetyFilter,
-    setup_default_framework,
     generate_text,
+    setup_default_framework,
 )
 from constitutional_ai.model_utils import GenerationConfig
-
-from demo_utils.model_manager import ModelManager
-from demo_utils.examples import get_example_prompts, get_test_suites, get_training_config
-from demo_utils.formatters import (
-    format_evaluation_result,
-    format_filter_result,
-    format_comparison_table,
-    format_comparison_result,
-    format_model_info,
-)
-from demo_utils.visualizations import (
-    create_principle_bar_chart,
-    create_comparison_chart,
-    create_improvement_chart,
-    create_radar_chart,
-)
-from demo_utils.training_handler import train_model_live
 
 # Initialize global state
 framework = setup_default_framework()
@@ -191,6 +191,7 @@ def start_training_handler(training_mode: str, progress=gr.Progress()):
 
     # Save baseline model state (clone it)
     import copy
+
     baseline_model = copy.deepcopy(model)
 
     # Train the model
@@ -333,7 +334,9 @@ with gr.Blocks(title="Constitutional AI Demo", theme=gr.themes.Soft()) as demo:
 
             # Wire up comparison
             load_model_btn.click(
-                fn=load_model_handler, inputs=[model_choice], outputs=[load_message, model_status_html]
+                fn=load_model_handler,
+                inputs=[model_choice],
+                outputs=[load_message, model_status_html],
             )
 
             compare_button.click(

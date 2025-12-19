@@ -5,7 +5,6 @@ Creates charts and plots for principle scores, comparisons, and analysis.
 """
 
 from io import BytesIO
-from typing import Any, Dict, List, Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -13,8 +12,8 @@ from PIL import Image
 
 
 def create_principle_bar_chart(
-    principle_scores: Dict[str, float], flagged_principles: List[str]
-) -> Optional[Image.Image]:
+    principle_scores: dict[str, float], flagged_principles: list[str]
+) -> Image.Image | None:
     """
     Create a bar chart showing principle scores.
 
@@ -76,8 +75,8 @@ def create_principle_bar_chart(
 
 
 def create_comparison_chart(
-    baseline_scores: Dict[str, float], constitutional_scores: Dict[str, float]
-) -> Optional[Image.Image]:
+    baseline_scores: dict[str, float], constitutional_scores: dict[str, float]
+) -> Image.Image | None:
     """
     Create a comparison chart showing before/after principle scores.
 
@@ -145,8 +144,8 @@ def create_comparison_chart(
 
 
 def create_improvement_chart(
-    baseline_scores: Dict[str, float], constitutional_scores: Dict[str, float]
-) -> Optional[Image.Image]:
+    baseline_scores: dict[str, float], constitutional_scores: dict[str, float]
+) -> Image.Image | None:
     """
     Create a chart showing improvement for each principle.
 
@@ -181,7 +180,7 @@ def create_improvement_chart(
     ax.grid(axis="x", alpha=0.3)
 
     # Add value labels
-    for i, (bar, imp) in enumerate(zip(bars, improvements)):
+    for i, (bar, imp) in enumerate(zip(bars, improvements, strict=False)):
         width = bar.get_width()
         label_x = width + (0.02 if width > 0 else -0.02)
         ha = "left" if width > 0 else "right"
@@ -199,7 +198,7 @@ def create_improvement_chart(
     return img
 
 
-def create_radar_chart(principle_scores: Dict[str, float]) -> Optional[Image.Image]:
+def create_radar_chart(principle_scores: dict[str, float]) -> Image.Image | None:
     """
     Create a radar chart showing principle balance.
 

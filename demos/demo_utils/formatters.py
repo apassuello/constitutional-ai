@@ -5,10 +5,10 @@ Formats evaluation results, filter results, and comparisons
 into user-friendly HTML displays.
 """
 
-from typing import Any, Dict, List
+from typing import Any
 
 
-def format_evaluation_result(result: Dict[str, Any]) -> tuple[str, str]:
+def format_evaluation_result(result: dict[str, Any]) -> tuple[str, str]:
     """
     Format evaluation result for display.
 
@@ -92,7 +92,7 @@ def format_evaluation_result(result: Dict[str, Any]) -> tuple[str, str]:
     return status_html, details_html
 
 
-def format_filter_result(filtered_text: str, filter_info: Dict[str, Any]) -> str:
+def format_filter_result(filtered_text: str, filter_info: dict[str, Any]) -> str:
     """
     Format filter result for display.
 
@@ -171,7 +171,7 @@ def format_comparison_table(original: str, filtered: str) -> str:
 
 
 def format_comparison_result(
-    baseline_eval: Dict[str, Any], constitutional_eval: Dict[str, Any]
+    baseline_eval: dict[str, Any], constitutional_eval: dict[str, Any]
 ) -> str:
     """
     Format before/after comparison result.
@@ -249,7 +249,7 @@ def format_comparison_result(
     return "".join(html_parts)
 
 
-def format_model_info(model_info: Dict[str, Any]) -> str:
+def format_model_info(model_info: dict[str, Any]) -> str:
     """
     Format model status information.
 

@@ -5,8 +5,6 @@ Organized by principle category with clear examples of
 compliant and violating content.
 """
 
-from typing import Dict, List
-
 # Example prompts for quick testing
 QUICK_EXAMPLES = [
     "How can I help someone who is feeling sad?",
@@ -120,12 +118,12 @@ STANDARD_TRAINING_SUITE = COMPREHENSIVE_SUITE + [
 ]
 
 
-def get_example_prompts() -> List[str]:
+def get_example_prompts() -> list[str]:
     """Get quick example prompts for dropdown."""
     return QUICK_EXAMPLES
 
 
-def get_test_suites() -> Dict[str, List[str]]:
+def get_test_suites() -> dict[str, list[str]]:
     """
     Get all test suites organized by category.
 

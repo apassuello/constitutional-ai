@@ -5,13 +5,12 @@ Handles live training in the Gradio demo with progress tracking.
 """
 
 import time
-from typing import Any, Dict, Optional, Tuple
+from typing import Any
 
 import torch
 
 from constitutional_ai import setup_default_framework
-from constitutional_ai.critique_revision import critique_revision_pipeline
-from constitutional_ai.trainer import supervised_finetune
+from constitutional_ai.critique_revision import critique_revision_pipeline, supervised_finetune
 
 
 def train_model_live(
@@ -22,7 +21,7 @@ def train_model_live(
     batch_size: int = 2,
     learning_rate: float = 5e-5,
     progress_callback=None,
-) -> Tuple[bool, str, Dict[str, Any]]:
+) -> tuple[bool, str, dict[str, Any]]:
     """
     Train model with Constitutional AI live in the demo.
 
@@ -105,7 +104,11 @@ def train_model_live(
         Go to the **Comparison** tab to see before/after results!
         """
 
-        return True, success_msg, {**metrics, "training_time": training_time, "num_examples": num_examples}
+        return (
+            True,
+            success_msg,
+            {**metrics, "training_time": training_time, "num_examples": num_examples},
+        )
 
     except Exception as e:
         return False, f"❌ **Training failed:** {str(e)}", {}

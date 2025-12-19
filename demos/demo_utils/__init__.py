@@ -13,13 +13,9 @@ This package provides modular components for the interactive demo:
 - examples: Test prompts and examples
 """
 
-from .model_manager import ModelManager, ModelStatus
 from .examples import get_example_prompts, get_test_suites
-from .formatters import (
-    format_evaluation_result,
-    format_filter_result,
-    format_comparison_result,
-)
+from .formatters import format_comparison_result, format_evaluation_result, format_filter_result
+from .model_manager import ModelManager, ModelStatus
 
 __all__ = [
     "ModelManager",

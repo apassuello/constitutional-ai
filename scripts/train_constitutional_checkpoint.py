@@ -22,20 +22,14 @@ Usage:
 
 import argparse
 import json
-import os
 import time
 from datetime import datetime
 from pathlib import Path
 
 import torch
 
-from constitutional_ai import (
-    load_model,
-    setup_default_framework,
-)
-from constitutional_ai.critique_revision import critique_revision_pipeline
-from constitutional_ai.trainer import supervised_finetune
-from constitutional_ai.config import get_default_config, get_lightweight_config
+from constitutional_ai import load_model, setup_default_framework
+from constitutional_ai.critique_revision import critique_revision_pipeline, supervised_finetune
 
 
 def get_training_prompts(mode: str) -> list[str]:
@@ -141,7 +135,7 @@ def main():
     print("=" * 80)
     print("CONSTITUTIONAL AI CHECKPOINT TRAINING")
     print("=" * 80)
-    print(f"\nConfiguration:")
+    print("\nConfiguration:")
     print(f"  Base model: {args.model}")
     print(f"  Mode: {args.mode}")
     print(f"  Training prompts: {len(prompts)}")
@@ -149,7 +143,7 @@ def main():
     print(f"  Batch size: {args.batch_size}")
     print(f"  Learning rate: {args.lr}")
     print(f"  Output: {output_dir}")
-    print(f"\nEstimated time: ", end="")
+    print("\nEstimated time: ", end="")
     if args.mode == "quick":
         print("15-20 minutes")
     elif args.mode == "standard":
@@ -207,7 +201,7 @@ def main():
 
     training_time = time.time() - start_time
 
-    print(f"\n  ✓ Training complete!")
+    print("\n  ✓ Training complete!")
     print(f"  Final loss: {metrics.get('final_loss', 'N/A')}")
     print(f"  Training time: {training_time:.1f}s ({training_time/60:.1f} min)")
 
@@ -242,19 +236,19 @@ def main():
     print("TRAINING COMPLETE!")
     print("=" * 80)
     print(f"\n✅ Constitutional AI checkpoint saved to: {output_dir}")
-    print(f"\n📊 Training Summary:")
+    print("\n📊 Training Summary:")
     print(f"   - Base model: {args.model}")
     print(f"   - Training examples: {len(training_data)}")
     print(f"   - Epochs: {num_epochs}")
     print(f"   - Final loss: {metrics.get('final_loss', 'N/A'):.4f}")
     print(f"   - Training time: {training_time/60:.1f} minutes")
-    print(f"\n🎯 Next Steps:")
-    print(f"   1. Test the checkpoint:")
+    print("\n🎯 Next Steps:")
+    print("   1. Test the checkpoint:")
     print(f"      python examples/quickstart.py --checkpoint {output_dir}")
-    print(f"   2. Use in Gradio demo:")
-    print(f"      - Run: python demos/gradio_demo.py")
-    print(f"      - Go to 'Comparison' tab")
-    print(f"      - Load this checkpoint for before/after comparison")
+    print("   2. Use in Gradio demo:")
+    print("      - Run: python demos/gradio_demo.py")
+    print("      - Go to 'Comparison' tab")
+    print("      - Load this checkpoint for before/after comparison")
     print("\n" + "=" * 80)
 
 

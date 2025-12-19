@@ -54,7 +54,13 @@ def load_model(
         ) from None
 
     if device is None:
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        # Priority: CUDA > MPS (Apple Silicon) > CPU
+        if torch.cuda.is_available():
+            device = torch.device("cuda")
+        elif torch.backends.mps.is_available():
+            device = torch.device("mps")
+        else:
+            device = torch.device("cpu")
 
     logger.info(f"Loading model: {model_name}")
     logger.info(f"Device: {device}")
