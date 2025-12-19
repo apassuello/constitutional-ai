@@ -625,7 +625,7 @@ def supervised_finetune(
     scaler = torch.cuda.amp.GradScaler(enabled=use_amp and device.type == "cuda")
 
     # Training loop
-    metrics = {"losses": [], "epochs": []}
+    metrics: dict[str, list[float]] = {"losses": [], "epochs": []}
 
     for epoch in range(num_epochs):
         epoch_loss = 0

@@ -270,7 +270,7 @@ def train_reward_model(
     optimizer = torch.optim.AdamW(reward_model.parameters(), lr=learning_rate)
 
     # Initialize metrics tracking
-    metrics = {"losses": [], "accuracy": [], "epochs": []}
+    metrics: dict[str, list[float]] = {"losses": [], "accuracy": [], "epochs": []}
 
     if validation_data:
         metrics["val_losses"] = []
@@ -528,7 +528,7 @@ class RewardModelTrainer:
         self.device = device or torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.learning_rate = learning_rate
         self.batch_size = batch_size
-        self.training_history = []
+        self.training_history: list[dict[str, list[float]]] = []
 
     def train(
         self,
@@ -595,15 +595,15 @@ class RewardModelTrainer:
 
         return metrics
 
-    def save_checkpoint(self, path: str) -> None:
+    def save_checkpoint(self, path: str | Path) -> None:
         """
         Save model checkpoint.
 
         Args:
             path: Path to save checkpoint (without extension)
         """
-        path = Path(path)
-        path.parent.mkdir(parents=True, exist_ok=True)
+        path_obj = Path(path)
+        path_obj.parent.mkdir(parents=True, exist_ok=True)
 
         # Save model state
         torch.save(
@@ -612,7 +612,7 @@ class RewardModelTrainer:
                 "training_history": self.training_history,
                 "hidden_size": self.reward_model.hidden_size,
             },
-            str(path) + ".pt",
+            str(path_obj) + ".pt",
         )
 
         # Save metadata
@@ -621,26 +621,26 @@ class RewardModelTrainer:
             "batch_size": self.batch_size,
             "hidden_size": self.reward_model.hidden_size,
         }
-        with open(str(path) + "_metadata.json", "w") as f:
+        with open(str(path_obj) + "_metadata.json", "w") as f:
             json.dump(metadata, f, indent=2)
 
-        logger.info(f"Checkpoint saved to {path}")
+        logger.info(f"Checkpoint saved to {path_obj}")
 
-    def load_checkpoint(self, path: str) -> None:
+    def load_checkpoint(self, path: str | Path) -> None:
         """
         Load model checkpoint.
 
         Args:
             path: Path to checkpoint (without extension)
         """
-        path = Path(path)
+        path_obj = Path(path)
 
         # Load model state
-        checkpoint = torch.load(str(path) + ".pt", map_location=self.device, weights_only=True)
+        checkpoint = torch.load(str(path_obj) + ".pt", map_location=self.device, weights_only=True)
         self.reward_model.load_state_dict(checkpoint["model_state_dict"])
         self.training_history = checkpoint.get("training_history", [])
 
-        logger.info(f"Checkpoint loaded from {path}")
+        logger.info(f"Checkpoint loaded from {path_obj}")
 
     def evaluate(self, evaluation_data: list[dict[str, Any]]) -> dict[str, float]:
         """

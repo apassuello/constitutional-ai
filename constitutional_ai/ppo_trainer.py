@@ -95,7 +95,7 @@ class PPOTrainer:
         )
 
         # Training statistics
-        self.stats = {
+        self.stats: dict[str, int | list[float]] = {
             "total_steps": 0,
             "policy_losses": [],
             "value_losses": [],
@@ -836,7 +836,7 @@ class PPOTrainer:
         logger.info(f"Epochs per batch: {num_epochs_per_batch}")
         logger.info(f"Total prompts: {len(prompts)}")
 
-        training_history = {
+        training_history: dict[str, list[float]] = {
             "policy_losses": [],
             "value_losses": [],
             "kl_divergences": [],

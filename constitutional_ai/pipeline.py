@@ -124,7 +124,7 @@ class ConstitutionalPipeline:
         # Training state
         self.phase1_complete = False
         self.phase2_complete = False
-        self.training_history = {"phase1": {}, "phase2": {}}
+        self.training_history: dict[str, dict[str, Any]] = {"phase1": {}, "phase2": {}}
 
         # Statistics
         self.stats = {
