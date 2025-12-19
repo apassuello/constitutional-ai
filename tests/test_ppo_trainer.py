@@ -360,7 +360,7 @@ class TestTrainStep:
 
         # Check that all metrics are numbers
         for _key, value in metrics.items():
-            assert isinstance(value, (int, float))
+            assert isinstance(value, int | float)
 
     @pytest.mark.slow
     def test_train_step_updates_parameters(self):

@@ -224,7 +224,7 @@ def create_radar_chart(principle_scores: dict[str, float]) -> Image.Image | None
     angles += angles[:1]
 
     # Create figure
-    fig, ax = plt.subplots(figsize=(8, 8), subplot_kw=dict(projection="polar"))
+    fig, ax = plt.subplots(figsize=(8, 8), subplot_kw={"projection": "polar"})
 
     # Draw the chart
     ax.plot(angles, values, "o-", linewidth=2, color="#3b82f6", alpha=0.8)
