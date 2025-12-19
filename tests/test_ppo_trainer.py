@@ -9,9 +9,6 @@ Tests all core PPO components:
 - Full training loop
 """
 
-from unittest.mock import MagicMock, Mock, patch
-
-import numpy as np
 import pytest
 import torch
 import torch.nn as nn
@@ -363,7 +360,7 @@ class TestTrainStep:
 
         # Check that all metrics are numbers
         for _key, value in metrics.items():
-            assert isinstance(value, (int, float))
+            assert isinstance(value, int | float)
 
     @pytest.mark.slow
     def test_train_step_updates_parameters(self):

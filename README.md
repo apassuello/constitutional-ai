@@ -6,8 +6,12 @@ A research implementation of **Constitutional AI** methodology - a technique for
 > This is a reference implementation extracted from a research project. Use for learning, experimentation, and research purposes only. Not recommended for production use.
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![Tests](https://github.com/apassuello/constitutional-ai/workflows/Tests/badge.svg)](https://github.com/apassuello/constitutional-ai/actions/workflows/ci.yml)
+[![Lint](https://github.com/apassuello/constitutional-ai/workflows/Lint/badge.svg)](https://github.com/apassuello/constitutional-ai/actions/workflows/code-quality.yml)
+[![Security](https://github.com/apassuello/constitutional-ai/workflows/Security/badge.svg)](https://github.com/apassuello/constitutional-ai/actions/workflows/dependency-review.yml)
+[![codecov](https://codecov.io/gh/apassuello/constitutional-ai/branch/main/graph/badge.svg)](https://codecov.io/gh/apassuello/constitutional-ai)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 ---
 
 ## 📋 What This Is
@@ -36,16 +40,16 @@ This implementation demonstrates the Constitutional AI methodology from Anthropi
 Clone and install from source:
 
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/apassuello/constitutional-ai.git
 cd constitutional-ai
 pip install -e .
 ```
 
 **Requirements:**
-- Python 3.8+
+- Python 3.10+
 - PyTorch 1.13+
 - Transformers 4.30+
-- See `requirements.txt` for full list
+- See `pyproject.toml` for full dependency list
 
 ---
 

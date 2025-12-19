@@ -9,7 +9,7 @@ SPECIAL NOTES: Provides flexible configuration for constitutional AI training
 """
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List
+from typing import Any
 
 
 @dataclass
@@ -52,10 +52,10 @@ class ConstitutionalTrainingConfig:
     # ========== Constitutional Principles Configuration ==========
 
     # Which principles to enable (if None, uses all)
-    enabled_principles: List[str] | None = None
+    enabled_principles: list[str] | None = None
 
     # Custom principle weights (principle_name: weight)
-    principle_weights: Dict[str, float] = field(
+    principle_weights: dict[str, float] = field(
         default_factory=lambda: {
             "harm_prevention": 2.0,  # Higher weight for harm prevention
             "truthfulness": 1.5,
@@ -89,10 +89,10 @@ class ConstitutionalTrainingConfig:
     val_data_path: str | None = None
 
     # Training prompts for RLAIF (if not using data files)
-    training_prompts: List[str] | None = None
+    training_prompts: list[str] | None = None
 
     # Validation prompts
-    validation_prompts: List[str] | None = None
+    validation_prompts: list[str] | None = None
 
     # ========== Evaluation Configuration ==========
 
@@ -146,7 +146,7 @@ class ConstitutionalTrainingConfig:
             if principle not in self.principle_weights:
                 self.principle_weights[principle] = 1.0
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert config to dictionary."""
         return {
             "learning_rate": self.learning_rate,
@@ -188,7 +188,7 @@ class ConstitutionalTrainingConfig:
         }
 
     @classmethod
-    def from_dict(cls, config_dict: Dict[str, Any]) -> "ConstitutionalTrainingConfig":
+    def from_dict(cls, config_dict: dict[str, Any]) -> "ConstitutionalTrainingConfig":
         """Create config from dictionary."""
         return cls(**config_dict)
 

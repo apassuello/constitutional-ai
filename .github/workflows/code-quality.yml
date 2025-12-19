@@ -1,0 +1,48 @@
+name: Lint
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+jobs:
+  lint:
+    name: Lint and Format Check
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e ".[dev]"
+
+    - name: Check formatting with Black
+      run: |
+        black --check constitutional_ai/ tests/ examples/ demos/
+
+    - name: Check import sorting with isort
+      run: |
+        isort --check-only constitutional_ai/ tests/ examples/ demos/
+
+    - name: Lint with Flake8
+      run: |
+        flake8 constitutional_ai/ tests/ examples/ demos/ --max-line-length=100 --extend-ignore=E203,W503,E501
+
+    - name: Lint with Ruff
+      run: |
+        ruff check constitutional_ai/ tests/ examples/ demos/
+
+    - name: Type check with MyPy
+      run: |
+        mypy constitutional_ai/ --ignore-missing-imports
+      continue-on-error: true  # Don't fail the build on type errors initially

@@ -9,16 +9,12 @@ SPECIAL NOTES: Implements scalable AI feedback for model fine-tuning by combinin
 constitutional evaluation with PPO-based reinforcement learning
 """
 
-from typing import Any, Dict, List
+import logging
+from typing import Any
 
+import numpy as np
 import torch
 import torch.nn as nn
-
-import logging
-
-
-logger = logging.getLogger(__name__)
-import numpy as np
 from tqdm import tqdm
 
 from .evaluator import ConstitutionalSafetyEvaluator
@@ -26,6 +22,8 @@ from .framework import ConstitutionalFramework
 from .ppo_trainer import PPOTrainer
 from .principles import setup_default_framework
 from .reward_model import RewardModel
+
+logger = logging.getLogger(__name__)
 
 
 class RLAIFTrainer:
@@ -113,10 +111,10 @@ class RLAIFTrainer:
 
     def generate_training_data(
         self,
-        prompts: List[str],
+        prompts: list[str],
         num_responses_per_prompt: int = 5,
         use_tokenizer: Any | None = None,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """
         Generate training data with constitutional feedback.
 
@@ -253,7 +251,7 @@ Analysis:"""
         except Exception as e:
             return f"[Critique generation error: {str(e)}]"
 
-    def _compute_combined_score(self, evaluation: Dict[str, Any], critique: str) -> float:
+    def _compute_combined_score(self, evaluation: dict[str, Any], critique: str) -> float:
         """
         Compute combined score from constitutional evaluation and critique.
 
@@ -267,13 +265,15 @@ Analysis:"""
             Combined score (lower is better)
         """
         # Constitutional score (weighted sum of violations)
-        constitutional_score = evaluation.get("direct_evaluation", {}).get("weighted_score", 0.0)
+        constitutional_score: float = evaluation.get("direct_evaluation", {}).get(
+            "weighted_score", 0.0
+        )
 
         # Critique score (based on negative terms)
-        critique_score = self._extract_score_from_critique(critique)
+        critique_score: float = self._extract_score_from_critique(critique)
 
         # Combine scores (could use more sophisticated weighting)
-        combined = constitutional_score + (critique_score * 0.5)
+        combined: float = constitutional_score + (critique_score * 0.5)
 
         return combined
 
@@ -310,7 +310,7 @@ Analysis:"""
         # Cap at 10
         return min(severity_score, 10.0)
 
-    def _select_best_response(self, evaluations: List[Dict[str, Any]]) -> int:
+    def _select_best_response(self, evaluations: list[dict[str, Any]]) -> int:
         """
         Select the best response based on evaluations.
 
@@ -334,8 +334,8 @@ Analysis:"""
         if self.ppo_trainer is None:
             self.ppo_trainer = PPOTrainer(
                 policy_model=self.policy_model,
-                value_model=self.value_model,
-                reward_model=self.reward_model,
+                value_model=self.value_model,  # type: ignore[arg-type]
+                reward_model=self.reward_model,  # type: ignore[arg-type]
                 tokenizer=tokenizer,
                 device=self.device,
                 learning_rate=self.learning_rate,
@@ -346,14 +346,14 @@ Analysis:"""
 
     def train(
         self,
-        prompts: List[str],
+        prompts: list[str],
         num_steps: int = 100,
         batch_size: int = 16,
         num_epochs_per_batch: int = 4,
         max_length: int = 150,
         tokenizer: Any | None = None,
-        validation_prompts: List[str] | None = None,
-    ) -> Dict[str, Any]:
+        validation_prompts: list[str] | None = None,
+    ) -> dict[str, Any]:
         """
         Train the policy model using constitutional AI feedback with PPO.
 
@@ -396,6 +396,7 @@ Analysis:"""
 
         # Run PPO training
         logger.info("Starting PPO optimization with constitutional reward model...")
+        assert self.ppo_trainer is not None, "PPO trainer should be initialized"
         ppo_results = self.ppo_trainer.train(
             prompts=prompts,
             num_steps=num_steps,
@@ -440,7 +441,7 @@ Analysis:"""
             "final_stats": self.stats,
         }
 
-    def validate(self, validation_prompts: List[str], tokenizer: Any | None = None) -> float:
+    def validate(self, validation_prompts: list[str], tokenizer: Any | None = None) -> float:
         """
         Validate model on validation prompts.
 
@@ -464,7 +465,7 @@ Analysis:"""
 
         return float(np.mean(scores))
 
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Get training statistics."""
         return {
             **self.stats,

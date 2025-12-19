@@ -53,8 +53,7 @@ def evaluate_spam_prevention(text: str, **kwargs) -> dict:
     all_caps_ratio = sum(1 for c in text if c.isupper()) / (len(text) + 1)
 
     flagged = (
-        all_caps_ratio > 0.5 or
-        sum(indicator in text.lower() for indicator in spam_indicators) >= 2
+        all_caps_ratio > 0.5 or sum(indicator in text.lower() for indicator in spam_indicators) >= 2
     )
 
     return {
@@ -114,10 +113,10 @@ def main():
         result = framework.evaluate_text(text)
 
         print(f"Flagged: {result['any_flagged']}")
-        if result['any_flagged']:
+        if result["any_flagged"]:
             print(f"Violations: {result['flagged_principles']}")
-            for principle_name in result['flagged_principles']:
-                principle_result = result['principle_results'][principle_name]
+            for principle_name in result["flagged_principles"]:
+                principle_result = result["principle_results"][principle_name]
                 print(f"  - {principle_name}: {principle_result['reason']}")
 
     print("\n" + "=" * 70)

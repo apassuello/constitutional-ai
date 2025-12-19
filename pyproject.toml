@@ -7,14 +7,14 @@ name = "constitutional-ai"
 version = "0.1.0-alpha"
 description = "Research implementation of Constitutional AI methodology"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 license = {text = "Apache-2.0"}
 keywords = ["constitutional-ai", "ai-safety", "research", "experimental", "education"]
 authors = [
-  {name = "Your Name", email = "your.email@example.com"}
+  {name = "Antonio Passuello", email = "apassuello@users.noreply.github.com"}
 ]
 maintainers = [
-  {name = "Your Name", email = "your.email@example.com"}
+  {name = "Antonio Passuello", email = "apassuello@users.noreply.github.com"}
 ]
 classifiers = [
   "Development Status :: 3 - Alpha",
@@ -23,8 +23,6 @@ classifiers = [
   "License :: OSI Approved :: Apache Software License",
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.8",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
@@ -46,6 +44,7 @@ dev = [
   "flake8>=4.0.0",
   "mypy>=0.950",
   "isort>=5.10.0",
+  "ruff>=0.0.260",
 ]
 api = [
   "requests>=2.28.0",
@@ -59,9 +58,9 @@ all = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/constitutional-ai"  # Update with actual URL
-Repository = "https://github.com/yourusername/constitutional-ai"  # Update with actual URL
-"Bug Tracker" = "https://github.com/yourusername/constitutional-ai/issues"  # Update with actual URL
+Homepage = "https://github.com/apassuello/constitutional-ai"
+Repository = "https://github.com/apassuello/constitutional-ai"
+"Bug Tracker" = "https://github.com/apassuello/constitutional-ai/issues"
 
 [tool.setuptools]
 packages = ["constitutional_ai"]
@@ -71,7 +70,7 @@ constitutional_ai = ["py.typed"]
 
 [tool.black]
 line-length = 100
-target-version = ['py38', 'py39', 'py310', 'py311', 'py312']
+target-version = ['py310', 'py311', 'py312']
 include = '\.pyi?$'
 exclude = '''
 /(
@@ -96,11 +95,33 @@ use_parentheses = true
 ensure_newline_before_comments = true
 
 [tool.mypy]
-python_version = "3.8"
-warn_return_any = true
+python_version = "3.10"
+warn_return_any = false  # ML code often returns Any from numpy/torch operations
 warn_unused_configs = true
 disallow_untyped_defs = false
 ignore_missing_imports = true
+# Allow flexible typing for ML ecosystem (PyTorch, NumPy, Transformers)
+allow_redefinition = true
+
+# Per-module options for ML-heavy modules
+[[tool.mypy.overrides]]
+module = [
+    "constitutional_ai.ppo_trainer",
+    "constitutional_ai.reward_model",
+    "constitutional_ai.critique_revision",
+    "constitutional_ai.pipeline"
+]
+# Disable checks that fail due to ML ecosystem type limitations
+disable_error_code = [
+    "no-any-return",    # NumPy/PyTorch return types are often Any
+    "union-attr",       # Transformers model outputs have optional attrs
+    "call-overload",    # NumPy overload resolution issues
+    "arg-type",         # PyTorch Module vs PreTrainedModel hierarchy
+    "assignment",       # Tensor scalar extraction type ambiguity
+    "attr-defined",     # Dynamic tensor attributes
+    "operator",         # Tensor operation type inference
+    "return-value"      # NumPy floating[Any] vs float return types
+]
 
 [tool.pytest.ini_options]
 minversion = "7.0"
@@ -128,3 +149,24 @@ exclude_lines = [
   "class .*\\bProtocol\\):",
   "@(abc\\.)?abstractmethod",
 ]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = [
+  "E",   # pycodestyle errors
+  "W",   # pycodestyle warnings
+  "F",   # pyflakes
+  "I",   # isort
+  "B",   # flake8-bugbear
+  "C4",  # flake8-comprehensions
+  "UP",  # pyupgrade
+]
+ignore = [
+  "E501",  # line too long, handled by black
+  "B008",  # do not perform function calls in argument defaults
+  "C901",  # too complex
+]
+per-file-ignores = {"__init__.py" = ["F401"]}

@@ -9,18 +9,16 @@ DEPENDENCIES: torch, transformers, typing
 SPECIAL NOTES: Implements Component 2 of Constitutional AI - trains reward model on preference pairs
 """
 
-from typing import Any, Dict, List
+import json
+import logging
+from pathlib import Path
+from typing import Any
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-import logging
-
-
 logger = logging.getLogger(__name__)
-import json
-from pathlib import Path
 
 
 class RewardModel(nn.Module):
@@ -117,8 +115,8 @@ class RewardModel(nn.Module):
 
     def get_rewards(
         self,
-        prompts: List[str],
-        responses: List[str],
+        prompts: list[str],
+        responses: list[str],
         tokenizer,
         device: torch.device,
         max_length: int = 512,
@@ -202,17 +200,17 @@ def compute_reward_loss(reward_chosen: torch.Tensor, reward_rejected: torch.Tens
 
 def train_reward_model(
     reward_model: RewardModel,
-    training_data: List[Dict[str, Any]],
+    training_data: list[dict[str, Any]],
     tokenizer,
     num_epochs: int = 3,
     batch_size: int = 4,
     learning_rate: float = 1e-5,
     device: torch.device | None = None,
-    validation_data: List[Dict[str, Any]] | None = None,
+    validation_data: list[dict[str, Any]] | None = None,
     max_length: int = 512,
     gradient_accumulation_steps: int = 1,
     log_interval: int = 10,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Train reward model on preference pairs.
 
@@ -252,6 +250,10 @@ def train_reward_model(
         >>> metrics = train_reward_model(reward_model, preference_data, tokenizer, num_epochs=3)
         >>> logger.info(f"Final accuracy: {metrics['accuracy'][-1]:.2%}")
     """
+    # Validate training data
+    if not training_data:
+        raise ValueError("Training data cannot be empty")
+
     # Setup device
     if device is None:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -268,7 +270,7 @@ def train_reward_model(
     optimizer = torch.optim.AdamW(reward_model.parameters(), lr=learning_rate)
 
     # Initialize metrics tracking
-    metrics = {"losses": [], "accuracy": [], "epochs": []}
+    metrics: dict[str, list[float]] = {"losses": [], "accuracy": [], "epochs": []}
 
     if validation_data:
         metrics["val_losses"] = []
@@ -302,10 +304,10 @@ def train_reward_model(
             batch = training_data[i : i + batch_size]
 
             # Prepare texts for chosen responses
-            chosen_texts = [item["prompt"] + " " + item["chosen"] for item in batch]
+            chosen_texts = [item["prompt"] + " " + item["response_chosen"] for item in batch]
 
             # Prepare texts for rejected responses
-            rejected_texts = [item["prompt"] + " " + item["rejected"] for item in batch]
+            rejected_texts = [item["prompt"] + " " + item["response_rejected"] for item in batch]
 
             # Tokenize chosen responses
             chosen_encodings = tokenizer(
@@ -401,7 +403,7 @@ def train_reward_model(
 
 def evaluate_reward_model(
     reward_model: RewardModel,
-    evaluation_data: List[Dict[str, Any]],
+    evaluation_data: list[dict[str, Any]],
     tokenizer,
     device: torch.device,
     batch_size: int = 4,
@@ -432,8 +434,8 @@ def evaluate_reward_model(
             batch = evaluation_data[i : i + batch_size]
 
             # Prepare texts
-            chosen_texts = [item["prompt"] + " " + item["chosen"] for item in batch]
-            rejected_texts = [item["prompt"] + " " + item["rejected"] for item in batch]
+            chosen_texts = [item["prompt"] + " " + item["response_chosen"] for item in batch]
+            rejected_texts = [item["prompt"] + " " + item["response_rejected"] for item in batch]
 
             # Tokenize
             chosen_encodings = tokenizer(
@@ -526,18 +528,18 @@ class RewardModelTrainer:
         self.device = device or torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.learning_rate = learning_rate
         self.batch_size = batch_size
-        self.training_history = []
+        self.training_history: list[dict[str, list[float]]] = []
 
     def train(
         self,
-        training_data: List[Dict[str, Any]],
+        training_data: list[dict[str, Any]],
         num_epochs: int = 3,
         validation_split: float = 0.1,
-        validation_data: List[Dict[str, Any]] | None = None,
+        validation_data: list[dict[str, Any]] | None = None,
         save_dir: str | None = None,
         save_best_only: bool = True,
         early_stopping_patience: int | None = None,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Train reward model with validation and checkpointing.
 
@@ -593,15 +595,15 @@ class RewardModelTrainer:
 
         return metrics
 
-    def save_checkpoint(self, path: str) -> None:
+    def save_checkpoint(self, path: str | Path) -> None:
         """
         Save model checkpoint.
 
         Args:
             path: Path to save checkpoint (without extension)
         """
-        path = Path(path)
-        path.parent.mkdir(parents=True, exist_ok=True)
+        path_obj = Path(path)
+        path_obj.parent.mkdir(parents=True, exist_ok=True)
 
         # Save model state
         torch.save(
@@ -610,7 +612,7 @@ class RewardModelTrainer:
                 "training_history": self.training_history,
                 "hidden_size": self.reward_model.hidden_size,
             },
-            str(path) + ".pt",
+            str(path_obj) + ".pt",
         )
 
         # Save metadata
@@ -619,28 +621,28 @@ class RewardModelTrainer:
             "batch_size": self.batch_size,
             "hidden_size": self.reward_model.hidden_size,
         }
-        with open(str(path) + "_metadata.json", "w") as f:
+        with open(str(path_obj) + "_metadata.json", "w") as f:
             json.dump(metadata, f, indent=2)
 
-        logger.info(f"Checkpoint saved to {path}")
+        logger.info(f"Checkpoint saved to {path_obj}")
 
-    def load_checkpoint(self, path: str) -> None:
+    def load_checkpoint(self, path: str | Path) -> None:
         """
         Load model checkpoint.
 
         Args:
             path: Path to checkpoint (without extension)
         """
-        path = Path(path)
+        path_obj = Path(path)
 
         # Load model state
-        checkpoint = torch.load(str(path) + ".pt", map_location=self.device, weights_only=True)
+        checkpoint = torch.load(str(path_obj) + ".pt", map_location=self.device, weights_only=True)
         self.reward_model.load_state_dict(checkpoint["model_state_dict"])
         self.training_history = checkpoint.get("training_history", [])
 
-        logger.info(f"Checkpoint loaded from {path}")
+        logger.info(f"Checkpoint loaded from {path_obj}")
 
-    def evaluate(self, evaluation_data: List[Dict[str, Any]]) -> Dict[str, float]:
+    def evaluate(self, evaluation_data: list[dict[str, Any]]) -> dict[str, float]:
         """
         Evaluate model on a dataset.
 

@@ -8,13 +8,10 @@ DEPENDENCIES: transformers, torch
 SPECIAL NOTES: Provides model integration for constitutional training
 """
 
+import logging
 from dataclasses import dataclass
-from typing import List
 
 import torch
-
-import logging
-
 
 logger = logging.getLogger(__name__)
 
@@ -52,10 +49,18 @@ def load_model(
     try:
         from transformers import AutoModelForCausalLM, AutoTokenizer
     except ImportError:
-        raise ImportError("transformers library required. Install with: pip install transformers")
+        raise ImportError(
+            "transformers library required. Install with: pip install transformers"
+        ) from None
 
     if device is None:
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        # Priority: CUDA > MPS (Apple Silicon) > CPU
+        if torch.cuda.is_available():
+            device = torch.device("cuda")
+        elif torch.backends.mps.is_available():
+            device = torch.device("mps")
+        else:
+            device = torch.device("cpu")
 
     logger.info(f"Loading model: {model_name}")
     logger.info(f"Device: {device}")
@@ -68,7 +73,7 @@ def load_model(
         tokenizer.pad_token = tokenizer.eos_token
 
     # Load model
-    model_kwargs = {}
+    model_kwargs: dict[str, bool | str] = {}
     if load_in_8bit and device.type == "cuda":
         model_kwargs["load_in_8bit"] = True
         model_kwargs["device_map"] = "auto"
@@ -76,7 +81,7 @@ def load_model(
     model = AutoModelForCausalLM.from_pretrained(model_name, **model_kwargs)
 
     if not load_in_8bit:
-        model = model.to(device)
+        model = model.to(device)  # type: ignore[arg-type]
 
     logger.info("Model loaded successfully")
     logger.info(f"Parameters: {sum(p.numel() for p in model.parameters()):,}")
@@ -157,7 +162,7 @@ def generate_text(
     # Decode output
     prompt_length = inputs["input_ids"].shape[1]
     generated_ids = outputs[0][prompt_length:]  # Remove prompt
-    generated_text = tokenizer.decode(generated_ids, skip_special_tokens=True)
+    generated_text: str = tokenizer.decode(generated_ids, skip_special_tokens=True)
 
     return generated_text
 
@@ -165,12 +170,12 @@ def generate_text(
 def batch_generate(
     model,
     tokenizer,
-    prompts: List[str],
+    prompts: list[str],
     generation_config: GenerationConfig | None = None,
     batch_size: int = 4,
     device: torch.device | None = None,
     show_progress: bool = True,
-) -> List[str]:
+) -> list[str]:
     """
     Generate text for multiple prompts in batches.
 
@@ -285,6 +290,6 @@ def prepare_model_for_training(model, learning_rate: float = 5e-5, weight_decay:
     return optimizer
 
 
-def get_model_device(model) -> torch.device:
+def get_model_device(model: torch.nn.Module) -> torch.device:
     """Get the device a model is on."""
     return next(model.parameters()).device

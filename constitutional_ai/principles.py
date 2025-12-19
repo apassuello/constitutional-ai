@@ -12,14 +12,10 @@ SPECIAL NOTES: Implements four core constitutional principles from Constitutiona
              evaluation (fast, no model required) for backward compatibility.
 """
 
-import re
-
-import logging
-
-
-_module_logger = logging.getLogger(__name__)
 import json
-from typing import Any, Dict, List
+import logging
+import re
+from typing import Any
 
 import torch
 from transformers import PreTrainedModel, PreTrainedTokenizer
@@ -27,6 +23,7 @@ from transformers import PreTrainedModel, PreTrainedTokenizer
 from .framework import ConstitutionalFramework, ConstitutionalPrinciple
 from .model_utils import GenerationConfig, generate_text
 
+_module_logger = logging.getLogger(__name__)
 
 # =============================================================================
 # DEBUG CONFIGURATION
@@ -67,7 +64,7 @@ def _debug_print(message: str, level: int = 1, prefix: str = "") -> None:
 
 
 def _print_eval_summary(
-    principle: str, flagged: bool, details: Dict[str, Any], model_name: str = "Evaluator"
+    principle: str, flagged: bool, details: dict[str, Any], model_name: str = "Evaluator"
 ) -> None:
     """Print a clean, readable evaluation summary."""
     if EVAL_DEBUG_LEVEL < 1:
@@ -336,7 +333,7 @@ Respond with a JSON object containing:
 JSON Response:"""
 
 
-def _parse_json_response(response: str, default_structure: Dict[str, Any]) -> Dict[str, Any]:
+def _parse_json_response(response: str, default_structure: dict[str, Any]) -> dict[str, Any]:
     """
     Parse JSON response from AI, with fallback to default structure.
 
@@ -394,14 +391,16 @@ def _parse_json_response(response: str, default_structure: Dict[str, Any]) -> Di
             json_str = response[start_idx : end_idx + 1]
             _debug_print(f"Extracted: {json_str[:150]}...", level=3, prefix="JSON")
 
-            parsed = json.loads(json_str)
+            parsed: dict[str, Any] = json.loads(json_str)
 
             # Fill in missing keys with defaults
             for key in default_structure:
                 if key not in parsed:
                     parsed[key] = default_structure[key]
 
-            _debug_print(f"✓ Parsed: flagged={parsed.get('flagged', 'N/A')}", level=3, prefix="JSON")
+            _debug_print(
+                f"✓ Parsed: flagged={parsed.get('flagged', 'N/A')}", level=3, prefix="JSON"
+            )
             return parsed
         else:
             _debug_print("✗ No JSON found, using defaults", level=2, prefix="JSON")
@@ -418,7 +417,7 @@ def _evaluate_harm_with_ai(
     tokenizer: PreTrainedTokenizer,
     device: torch.device,
     logger=None,  # type: ignore
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Evaluate harm potential using AI-based evaluation (Constitutional AI approach).
 
@@ -477,7 +476,7 @@ def _evaluate_harm_with_ai(
         return _evaluate_harm_with_regex(text)
 
 
-def _evaluate_harm_with_regex(text: str) -> Dict[str, Any]:
+def _evaluate_harm_with_regex(text: str) -> dict[str, Any]:
     """
     Evaluate harm potential using regex-based heuristics (legacy fallback).
 
@@ -578,7 +577,7 @@ def evaluate_harm_potential(
     use_ai: bool = True,
     hybrid_mode: bool = True,  # NEW: Use regex as safety net
     logger=None,  # type: ignore
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Evaluate potential for physical, psychological or social harm.
     Implements a constitutional principle from Constitutional AI.
@@ -666,7 +665,10 @@ def analyze_potential_consequences(text: str) -> str:
 
     if "break into" in text_lower or "breaking into" in text_lower:
         # Check if it's a system/computer vs physical property
-        if any(target in text_lower for target in ["system", "computer", "network", "database", "server", "account"]):
+        if any(
+            target in text_lower
+            for target in ["system", "computer", "network", "database", "server", "account"]
+        ):
             return "unauthorized access"
         else:
             return "Could enable unauthorized entry or burglary"
@@ -677,7 +679,20 @@ def analyze_potential_consequences(text: str) -> str:
 
     # Category 3: Cybercrime
     if any(word in text_lower for word in ["hack", "crack", "bypass"]):
-        if any(target in text_lower for target in ["password", "security", "system", "account", "computer", "network", "database", "server", "website"]):
+        if any(
+            target in text_lower
+            for target in [
+                "password",
+                "security",
+                "system",
+                "account",
+                "computer",
+                "network",
+                "database",
+                "server",
+                "website",
+            ]
+        ):
             return "unauthorized access"
 
     if any(
@@ -726,7 +741,7 @@ def _evaluate_truthfulness_with_ai(
     tokenizer: PreTrainedTokenizer,
     device: torch.device,
     logger=None,  # type: ignore
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Evaluate truthfulness using AI-based evaluation (Constitutional AI approach).
 
@@ -786,7 +801,7 @@ def _evaluate_truthfulness_with_ai(
         return _evaluate_truthfulness_with_regex(text)
 
 
-def _evaluate_truthfulness_with_regex(text: str) -> Dict[str, Any]:
+def _evaluate_truthfulness_with_regex(text: str) -> dict[str, Any]:
     """
     Evaluate truthfulness using regex-based heuristics (legacy fallback).
 
@@ -824,7 +839,7 @@ def evaluate_truthfulness(
     use_ai: bool = True,
     hybrid_mode: bool = True,
     logger=None,  # type: ignore
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Evaluate whether content is misleading or deceptive.
     Implements a constitutional principle from Constitutional AI.
@@ -882,7 +897,7 @@ def evaluate_truthfulness(
         return _evaluate_truthfulness_with_regex(text)
 
 
-def identify_unsupported_claims(text: str) -> List[str]:
+def identify_unsupported_claims(text: str) -> list[str]:
     """
     Identify claims made without supporting evidence.
 
@@ -893,7 +908,7 @@ def identify_unsupported_claims(text: str) -> List[str]:
         List of unsupported claims (with context)
     """
     # PERFORMANCE: Use pre-compiled patterns from module level (10-20x faster)
-    unsupported_claims = []
+    unsupported_claims: list[str] = []
     for pattern in CLAIM_PATTERNS:
         matches = pattern.finditer(text)
         for match in matches:
@@ -913,7 +928,7 @@ def identify_unsupported_claims(text: str) -> List[str]:
     return unsupported_claims
 
 
-def identify_logical_contradictions(text: str) -> List[str]:
+def identify_logical_contradictions(text: str) -> list[str]:
     """
     Identify logical contradictions in the text.
 
@@ -937,7 +952,7 @@ def identify_logical_contradictions(text: str) -> List[str]:
     return contradictions
 
 
-def identify_misleading_statistics(text: str) -> List[str]:
+def identify_misleading_statistics(text: str) -> list[str]:
     """
     Identify potentially misleading statistics in the text.
 
@@ -948,7 +963,7 @@ def identify_misleading_statistics(text: str) -> List[str]:
         List of potentially misleading statistics (with context)
     """
     # PERFORMANCE: Use pre-compiled patterns from module level (10-20x faster)
-    misleading_stats = []
+    misleading_stats: list[str] = []
     for pattern in STAT_PATTERNS:
         matches = pattern.finditer(text)
         for match in matches:
@@ -974,7 +989,7 @@ def _evaluate_fairness_with_ai(
     tokenizer: PreTrainedTokenizer,
     device: torch.device,
     logger=None,  # type: ignore
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Evaluate fairness using AI-based evaluation (Constitutional AI approach).
 
@@ -1033,7 +1048,7 @@ def _evaluate_fairness_with_ai(
         return _evaluate_fairness_with_regex(text)
 
 
-def _evaluate_fairness_with_regex(text: str) -> Dict[str, Any]:
+def _evaluate_fairness_with_regex(text: str) -> dict[str, Any]:
     """
     Evaluate fairness using regex-based heuristics (legacy fallback).
 
@@ -1045,7 +1060,7 @@ def _evaluate_fairness_with_regex(text: str) -> Dict[str, Any]:
     """
     # PERFORMANCE: Use pre-compiled patterns from module level (10-20x faster)
     # Check for stereotyping or overgeneralizations about groups
-    stereotypes = []
+    stereotypes: list[str] = []
     for pattern in STEREOTYPE_PATTERNS:
         matches = pattern.finditer(text)
         for match in matches:
@@ -1069,7 +1084,7 @@ def _evaluate_fairness_with_regex(text: str) -> Dict[str, Any]:
         "their kind",
     ]
 
-    biased_language = []
+    biased_language: list[str] = []
     for term in biased_terms:
         if term in text.lower():
             # Get context around the term
@@ -1096,7 +1111,7 @@ def evaluate_fairness(
     use_ai: bool = True,
     hybrid_mode: bool = True,
     logger=None,  # type: ignore
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Evaluate whether content treats individuals and groups fairly.
     Implements a constitutional principle from Constitutional AI.
@@ -1155,7 +1170,7 @@ def _evaluate_autonomy_with_ai(
     tokenizer: PreTrainedTokenizer,
     device: torch.device,
     logger=None,  # type: ignore
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Evaluate autonomy respect using AI-based evaluation (Constitutional AI approach).
 
@@ -1214,7 +1229,7 @@ def _evaluate_autonomy_with_ai(
         return _evaluate_autonomy_with_regex(text)
 
 
-def _evaluate_autonomy_with_regex(text: str) -> Dict[str, Any]:
+def _evaluate_autonomy_with_regex(text: str) -> dict[str, Any]:
     """
     Evaluate autonomy respect using regex-based heuristics (legacy fallback).
 
@@ -1226,7 +1241,7 @@ def _evaluate_autonomy_with_regex(text: str) -> Dict[str, Any]:
     """
     # PERFORMANCE: Use pre-compiled patterns from module level (10-20x faster)
     # Check for coercive language
-    coercive_language = []
+    coercive_language: list[str] = []
     for pattern in COERCIVE_PATTERNS:
         matches = pattern.finditer(text)
         for match in matches:
@@ -1246,7 +1261,7 @@ def _evaluate_autonomy_with_regex(text: str) -> Dict[str, Any]:
                 coercive_language.append(context)
 
     # Check for manipulative language
-    manipulative_language = []
+    manipulative_language: list[str] = []
     for pattern in MANIPULATIVE_AUTONOMY_PATTERNS:
         matches = pattern.finditer(text)
         for match in matches:
@@ -1272,7 +1287,7 @@ def evaluate_autonomy_respect(
     use_ai: bool = True,
     hybrid_mode: bool = True,
     logger=None,  # type: ignore
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Evaluate whether content respects human autonomy and decision-making.
     Implements a constitutional principle from Constitutional AI.

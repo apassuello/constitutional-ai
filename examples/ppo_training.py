@@ -27,10 +27,7 @@ class ValueModel(nn.Module):
 
         # Value head: projects to scalar value
         self.value_head = nn.Sequential(
-            nn.Linear(hidden_size, 256),
-            nn.ReLU(),
-            nn.Dropout(0.1),
-            nn.Linear(256, 1)
+            nn.Linear(hidden_size, 256), nn.ReLU(), nn.Dropout(0.1), nn.Linear(256, 1)
         )
 
     def forward(self, input_ids, attention_mask):
@@ -46,9 +43,7 @@ class ValueModel(nn.Module):
         """
         # Get base model outputs
         outputs = self.base_model(
-            input_ids=input_ids,
-            attention_mask=attention_mask,
-            output_hidden_states=True
+            input_ids=input_ids, attention_mask=attention_mask, output_hidden_states=True
         )
 
         # Use last hidden state of final token
@@ -67,12 +62,12 @@ def main():
     print("=" * 60)
 
     # Device setup
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
 
     # 1. Load models and tokenizer
     print("\n1. Loading models...")
-    model_name = 'gpt2'  # or 'gpt2-medium', 'gpt2-large'
+    model_name = "gpt2"  # or 'gpt2-medium', 'gpt2-large'
 
     # Policy model (the model being trained)
     policy_model = AutoModelForCausalLM.from_pretrained(model_name)
@@ -110,13 +105,13 @@ def main():
         reward_model=reward_model,
         tokenizer=tokenizer,
         device=device,
-        learning_rate=1e-5,      # Small learning rate for stability
-        clip_epsilon=0.2,         # PPO clipping parameter
-        kl_penalty=0.1,           # KL divergence penalty
-        gamma=0.99,               # Discount factor
-        gae_lambda=0.95,          # GAE lambda
-        value_loss_coef=0.5,      # Value loss coefficient
-        max_grad_norm=1.0         # Gradient clipping
+        learning_rate=1e-5,  # Small learning rate for stability
+        clip_epsilon=0.2,  # PPO clipping parameter
+        kl_penalty=0.1,  # KL divergence penalty
+        gamma=0.99,  # Discount factor
+        gae_lambda=0.95,  # GAE lambda
+        value_loss_coef=0.5,  # Value loss coefficient
+        max_grad_norm=1.0,  # Gradient clipping
     )
     print("PPO trainer initialized")
 
@@ -140,13 +135,13 @@ def main():
     # 6. Training configuration
     print("\n6. Training configuration...")
     training_config = {
-        'num_steps': 50,              # Number of training steps
-        'batch_size': 4,              # Prompts per batch
-        'num_epochs_per_batch': 4,    # Optimization epochs per batch
-        'max_length': 150,            # Maximum response length
-        'temperature': 1.0,           # Sampling temperature
-        'checkpoint_dir': './checkpoints/ppo',  # Checkpoint directory
-        'checkpoint_freq': 10         # Checkpoint every N steps
+        "num_steps": 50,  # Number of training steps
+        "batch_size": 4,  # Prompts per batch
+        "num_epochs_per_batch": 4,  # Optimization epochs per batch
+        "max_length": 150,  # Maximum response length
+        "temperature": 1.0,  # Sampling temperature
+        "checkpoint_dir": "./checkpoints/ppo",  # Checkpoint directory
+        "checkpoint_freq": 10,  # Checkpoint every N steps
     }
 
     for key, value in training_config.items():
@@ -156,25 +151,22 @@ def main():
     print("\n7. Starting PPO training...")
     print("-" * 60)
 
-    results = ppo_trainer.train(
-        prompts=training_prompts,
-        **training_config
-    )
+    results = ppo_trainer.train(prompts=training_prompts, **training_config)
 
     # 8. Display results
     print("\n8. Training Results")
     print("=" * 60)
 
-    final_stats = results['final_stats']
-    print(f"\nFinal Statistics:")
+    final_stats = results["final_stats"]
+    print("\nFinal Statistics:")
     print(f"  Total steps: {final_stats['total_steps']}")
     print(f"  Average policy loss: {final_stats['avg_policy_loss']:.4f}")
     print(f"  Average value loss: {final_stats['avg_value_loss']:.4f}")
     print(f"  Average KL divergence: {final_stats['avg_kl_divergence']:.4f}")
     print(f"  Average reward: {final_stats['avg_reward']:.4f}")
 
-    history = results['training_history']
-    print(f"\nTraining History:")
+    history = results["training_history"]
+    print("\nTraining History:")
     print(f"  Number of steps: {len(history['policy_losses'])}")
     print(f"  Initial policy loss: {history['policy_losses'][0]:.4f}")
     print(f"  Final policy loss: {history['policy_losses'][-1]:.4f}")
@@ -184,53 +176,36 @@ def main():
     # 9. Save final model
     print("\n9. Saving final model...")
     import os
-    os.makedirs('./models/ppo_trained', exist_ok=True)
 
-    torch.save(
-        policy_model.state_dict(),
-        './models/ppo_trained/policy_model.pt'
-    )
-    torch.save(
-        value_model.state_dict(),
-        './models/ppo_trained/value_model.pt'
-    )
+    os.makedirs("./models/ppo_trained", exist_ok=True)
+
+    torch.save(policy_model.state_dict(), "./models/ppo_trained/policy_model.pt")
+    torch.save(value_model.state_dict(), "./models/ppo_trained/value_model.pt")
     print("Models saved to ./models/ppo_trained/")
 
     # 10. Test generation with trained model
     print("\n10. Testing generation with trained model...")
     policy_model.eval()
 
-    test_prompts = [
-        "How can AI be beneficial?",
-        "What should I know about ethics?"
-    ]
+    test_prompts = ["How can AI be beneficial?", "What should I know about ethics?"]
 
-    from constitutional_ai.model_utils import generate_text, GenerationConfig
+    from constitutional_ai.model_utils import GenerationConfig, generate_text
 
-    gen_config = GenerationConfig(
-        max_length=100,
-        temperature=0.7,
-        do_sample=True
-    )
+    gen_config = GenerationConfig(max_length=100, temperature=0.7, do_sample=True)
 
     for prompt in test_prompts:
         print(f"\nPrompt: {prompt}")
-        response = generate_text(
-            policy_model,
-            tokenizer,
-            prompt,
-            gen_config,
-            device
-        )
+        response = generate_text(policy_model, tokenizer, prompt, gen_config, device)
         print(f"Response: {response}")
 
     print("\n" + "=" * 60)
     print("PPO training complete!")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Optional: Set random seeds for reproducibility
     import random
+
     import numpy as np
 
     seed = 42

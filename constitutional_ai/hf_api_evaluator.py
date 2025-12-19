@@ -10,14 +10,12 @@ SPECIAL NOTES: Uses HF Inference API for accurate toxicity/harm detection withou
               Much more accurate than regex for subtle harmful content.
 """
 
+import logging
 import os
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, Dict
-
-import logging
-
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -103,7 +101,7 @@ def get_hf_api_client():
 
 def evaluate_toxicity_api(
     text: str, config: HFAPIConfig | None = None, verbose: bool = False
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Evaluate text toxicity using HuggingFace Inference API.
 
@@ -218,7 +216,7 @@ def evaluate_toxicity_api(
 
 def evaluate_harm_with_hf_api(
     text: str, config: HFAPIConfig | None = None, verbose: bool = False
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Evaluate harm potential using HuggingFace API.
 
@@ -326,7 +324,7 @@ class HuggingFaceAPIEvaluator:
                 logger.info(f"[HF-API] Failed to create client: {e}")
         return self._client
 
-    def evaluate_harm(self, text: str, verbose: bool = False) -> Dict[str, Any]:
+    def evaluate_harm(self, text: str, verbose: bool = False) -> dict[str, Any]:
         """
         Evaluate text for harmful content.
 
@@ -339,7 +337,7 @@ class HuggingFaceAPIEvaluator:
         """
         return evaluate_harm_with_hf_api(text, self.config, verbose)
 
-    def evaluate_toxicity(self, text: str, verbose: bool = False) -> Dict[str, Any]:
+    def evaluate_toxicity(self, text: str, verbose: bool = False) -> dict[str, Any]:
         """
         Evaluate text toxicity.
 
@@ -366,14 +364,14 @@ class HuggingFaceAPIEvaluator:
             Function that takes text and returns evaluation dict
         """
 
-        def eval_fn(text: str, **kwargs) -> Dict[str, Any]:
+        def eval_fn(text: str, **kwargs) -> dict[str, Any]:
             return self.evaluate_harm(text)
 
         return eval_fn
 
 
 # Convenience function for quick evaluation
-def quick_evaluate(text: str, threshold: float = 0.5) -> Dict[str, Any]:
+def quick_evaluate(text: str, threshold: float = 0.5) -> dict[str, Any]:
     """
     Quick evaluation of text toxicity using HF API.
 

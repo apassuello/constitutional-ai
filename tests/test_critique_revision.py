@@ -3,9 +3,8 @@ Unit tests for critique_revision.py
 Tests the critique-revision cycle for Constitutional AI Phase 1 (Supervised Learning).
 """
 
-from unittest.mock import MagicMock, Mock, patch
+from unittest.mock import Mock, patch
 
-import pytest
 import torch
 
 from constitutional_ai.critique_revision import (
@@ -17,7 +16,7 @@ from constitutional_ai.critique_revision import (
     generate_revision,
     supervised_finetune,
 )
-from constitutional_ai.framework import ConstitutionalFramework, ConstitutionalPrinciple
+from constitutional_ai.framework import ConstitutionalFramework
 
 
 class TestPromptTemplates:
@@ -182,6 +181,10 @@ class TestCritiqueRevisionPipeline:
         self.mock_principle = Mock()
         self.mock_principle.description = "Test principle description"
         self.mock_framework.principles = {"test": self.mock_principle}
+        # Add required attributes for critique_revision_pipeline
+        self.mock_framework.model = self.mock_model
+        self.mock_framework.tokenizer = self.mock_tokenizer
+        self.mock_framework.device = self.device
 
     @patch("constitutional_ai.critique_revision.generate_critique")
     @patch("constitutional_ai.critique_revision.generate_revision")
@@ -192,6 +195,20 @@ class TestCritiqueRevisionPipeline:
         mock_gen_crit.return_value = "Critique text"
         mock_gen_rev.return_value = "Revised response"
 
+        # Mock framework evaluation to show improvement
+        self.mock_framework.evaluate_text.side_effect = [
+            {
+                "weighted_score": 3.0,
+                "flagged_principles": ["harm"],
+                "evaluation_method": "regex_heuristic",
+            },  # Initial (bad)
+            {
+                "weighted_score": 1.0,
+                "flagged_principles": [],
+                "evaluation_method": "regex_heuristic",
+            },  # Revised (better)
+        ]
+
         result = critique_revision_pipeline(
             prompts=["Test prompt"],
             model=self.mock_model,
@@ -201,10 +218,14 @@ class TestCritiqueRevisionPipeline:
             num_revisions=1,
         )
 
-        assert len(result) == 1
-        assert result[0]["prompt"] == "Test prompt"
-        assert result[0]["response"] == "Revised response"
-        assert result[0]["num_revisions"] == 1
+        # Pipeline now returns a dict with training_data, preference_pairs, and stats
+        assert "training_data" in result
+        assert "preference_pairs" in result
+        assert "stats" in result
+        assert len(result["training_data"]) == 1
+        assert result["training_data"][0]["prompt"] == "Test prompt"
+        assert result["training_data"][0]["response"] == "Revised response"
+        assert result["training_data"][0]["num_revisions"] == 1
 
     @patch("constitutional_ai.critique_revision.generate_critique")
     @patch("constitutional_ai.critique_revision.generate_revision")
@@ -215,6 +236,20 @@ class TestCritiqueRevisionPipeline:
         mock_gen_crit.return_value = "Critique"
         mock_gen_rev.side_effect = ["Revision 1", "Revision 2"]
 
+        # Mock framework evaluation to show improvement
+        self.mock_framework.evaluate_text.side_effect = [
+            {
+                "weighted_score": 4.0,
+                "flagged_principles": ["harm", "truthfulness"],
+                "evaluation_method": "regex_heuristic",
+            },  # Initial (bad)
+            {
+                "weighted_score": 0.5,
+                "flagged_principles": [],
+                "evaluation_method": "regex_heuristic",
+            },  # Revised (much better)
+        ]
+
         result = critique_revision_pipeline(
             prompts=["Test"],
             model=self.mock_model,
@@ -224,15 +259,17 @@ class TestCritiqueRevisionPipeline:
             num_revisions=2,
         )
 
-        assert len(result) == 1
-        assert result[0]["response"] == "Revision 2"
+        # Pipeline now returns dict with training_data, preference_pairs, stats
+        assert "training_data" in result
+        assert len(result["training_data"]) == 1
+        assert result["training_data"][0]["response"] == "Revision 2"
         assert mock_gen_crit.call_count == 2
         assert mock_gen_rev.call_count == 2
 
     @patch("constitutional_ai.critique_revision.generate_text")
     def test_pipeline_handles_exceptions(self, mock_gen_text):
         """Test pipeline handles exceptions gracefully."""
-        mock_gen_text.side_effect = Exception("Generation failed")
+        mock_gen_text.side_effect = RuntimeError("Generation failed")
 
         result = critique_revision_pipeline(
             prompts=["Test"],
@@ -242,7 +279,11 @@ class TestCritiqueRevisionPipeline:
             device=self.device,
         )
 
-        assert len(result) == 0  # Failed prompt should not be included
+        # When all prompts fail, training_data should be empty
+        assert len(result["training_data"]) == 0
+        assert len(result["preference_pairs"]) == 0
+        assert result["stats"]["training_examples"] == 0
+        assert result["stats"]["skipped"] == 1
 
 
 class TestConstitutionalDataset:

@@ -9,22 +9,19 @@ DEPENDENCIES: torch, transformers, typing
 SPECIAL NOTES: Implements full PPO algorithm for RLAIF Phase 2c
 """
 
-from typing import Any, Dict, List, Tuple
+import copy
+import logging
+from typing import Any
 
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
-import logging
-
-
-logger = logging.getLogger(__name__)
-import copy
-
-import numpy as np
 from tqdm import tqdm
 
 from .model_utils import GenerationConfig, generate_text
+
+logger = logging.getLogger(__name__)
 
 
 class PPOTrainer:
@@ -98,7 +95,7 @@ class PPOTrainer:
         )
 
         # Training statistics
-        self.stats = {
+        self.stats: dict[str, int | list[float]] = {
             "total_steps": 0,
             "policy_losses": [],
             "value_losses": [],
@@ -109,7 +106,7 @@ class PPOTrainer:
 
     def compute_gae(
         self, rewards: torch.Tensor, values: torch.Tensor, dones: torch.Tensor
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         """
         Compute Generalized Advantage Estimation.
 
@@ -205,8 +202,8 @@ class PPOTrainer:
         return policy_loss
 
     def generate_responses(
-        self, prompts: List[str], max_length: int = 150, temperature: float = 1.0
-    ) -> Tuple[List[str], torch.Tensor]:
+        self, prompts: list[str], max_length: int = 150, temperature: float = 1.0
+    ) -> tuple[list[str], torch.Tensor]:
         """
         Generate responses from current policy and compute log probabilities.
 
@@ -285,7 +282,7 @@ class PPOTrainer:
 
         return responses, log_probs_tensor
 
-    def compute_rewards(self, prompts: List[str], responses: List[str]) -> torch.Tensor:
+    def compute_rewards(self, prompts: list[str], responses: list[str]) -> torch.Tensor:
         """
         Compute rewards using the reward model.
 
@@ -355,7 +352,7 @@ class PPOTrainer:
 
         return rewards_tensor
 
-    def _compute_values_with_grad(self, prompts: List[str], responses: List[str]) -> torch.Tensor:
+    def _compute_values_with_grad(self, prompts: list[str], responses: list[str]) -> torch.Tensor:
         """
         Compute value estimates WITH gradients for training.
 
@@ -421,7 +418,7 @@ class PPOTrainer:
 
         return values_tensor
 
-    def compute_values(self, prompts: List[str], responses: List[str]) -> torch.Tensor:
+    def compute_values(self, prompts: list[str], responses: list[str]) -> torch.Tensor:
         """
         Compute value estimates using the value model (without gradients).
 
@@ -479,7 +476,7 @@ class PPOTrainer:
 
         return values_tensor
 
-    def _get_logprobs_with_grad(self, prompts: List[str], responses: List[str]) -> torch.Tensor:
+    def _get_logprobs_with_grad(self, prompts: list[str], responses: list[str]) -> torch.Tensor:
         """
         Compute log probabilities WITH gradients for policy training.
 
@@ -551,7 +548,7 @@ class PPOTrainer:
 
         return log_probs_tensor
 
-    def get_logprobs(self, prompts: List[str], responses: List[str]) -> torch.Tensor:
+    def get_logprobs(self, prompts: list[str], responses: list[str]) -> torch.Tensor:
         """
         Compute log probabilities for given responses under current policy.
 
@@ -623,7 +620,7 @@ class PPOTrainer:
 
         return log_probs_tensor
 
-    def get_reference_logprobs(self, prompts: List[str], responses: List[str]) -> torch.Tensor:
+    def get_reference_logprobs(self, prompts: list[str], responses: list[str]) -> torch.Tensor:
         """
         Compute log probabilities for given responses under reference policy.
 
@@ -696,11 +693,11 @@ class PPOTrainer:
 
     def train_step(
         self,
-        prompts: List[str],
+        prompts: list[str],
         num_epochs_per_batch: int = 4,
         max_length: int = 150,
         temperature: float = 1.0,
-    ) -> Dict[str, float]:
+    ) -> dict[str, float]:
         """
         Single PPO training step.
 
@@ -809,7 +806,7 @@ class PPOTrainer:
 
     def train(
         self,
-        prompts: List[str],
+        prompts: list[str],
         num_steps: int = 100,
         batch_size: int = 4,
         num_epochs_per_batch: int = 4,
@@ -817,7 +814,7 @@ class PPOTrainer:
         temperature: float = 1.0,
         checkpoint_dir: str | None = None,
         checkpoint_freq: int = 10,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Full PPO training loop.
 
@@ -839,7 +836,7 @@ class PPOTrainer:
         logger.info(f"Epochs per batch: {num_epochs_per_batch}")
         logger.info(f"Total prompts: {len(prompts)}")
 
-        training_history = {
+        training_history: dict[str, list[float]] = {
             "policy_losses": [],
             "value_losses": [],
             "kl_divergences": [],
@@ -950,7 +947,7 @@ class PPOTrainer:
         logger.info(f"Checkpoint loaded from {checkpoint_path}")
         logger.info(f"Resuming from step {checkpoint['step']}")
 
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Get training statistics."""
         return {
             **self.stats,

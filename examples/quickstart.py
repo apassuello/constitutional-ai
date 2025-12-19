@@ -14,13 +14,13 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 
 # Import Constitutional AI components
 from constitutional_ai import (
-    setup_default_framework,
+    RewardModel,
+    generate_comparison,
     generate_critique,
     generate_revision,
-    generate_comparison,
-    RewardModel
+    setup_default_framework,
 )
-from constitutional_ai.model_utils import generate_text, GenerationConfig
+from constitutional_ai.model_utils import GenerationConfig, generate_text
 
 
 def demo_critique_revision():
@@ -31,11 +31,11 @@ def demo_critique_revision():
 
     # Setup
     print("\n[1] Loading model and constitutional framework...")
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
 
-    model = AutoModelForCausalLM.from_pretrained('gpt2')
-    tokenizer = AutoTokenizer.from_pretrained('gpt2')
+    model = AutoModelForCausalLM.from_pretrained("gpt2")
+    tokenizer = AutoTokenizer.from_pretrained("gpt2")
     model = model.to(device)
 
     if tokenizer.pad_token is None:
@@ -44,12 +44,12 @@ def demo_critique_revision():
     framework = setup_default_framework()
     principles = [p.description for p in framework.principles]
 
-    print(f"✓ Loaded model: GPT-2")
+    print("✓ Loaded model: GPT-2")
     print(f"✓ Loaded {len(principles)} constitutional principles")
 
     # Example prompt
     prompt = "What is artificial intelligence?"
-    print(f"\n[2] Generating initial response...")
+    print("\n[2] Generating initial response...")
     print(f"Prompt: {prompt}")
 
     config = GenerationConfig(max_length=100, temperature=0.8, do_sample=True)
@@ -58,20 +58,20 @@ def demo_critique_revision():
     print(f"Original response: {original_response}")
 
     # Generate critique
-    print(f"\n[3] Generating constitutional critique...")
+    print("\n[3] Generating constitutional critique...")
     critique = generate_critique(
         prompt=prompt,
         response=original_response,
         principles=principles,
         model=model,
         tokenizer=tokenizer,
-        device=device
+        device=device,
     )
 
     print(f"Critique: {critique}")
 
     # Generate revision
-    print(f"\n[4] Generating improved revision...")
+    print("\n[4] Generating improved revision...")
     revision = generate_revision(
         prompt=prompt,
         response=original_response,
@@ -79,7 +79,7 @@ def demo_critique_revision():
         principles=principles,
         model=model,
         tokenizer=tokenizer,
-        device=device
+        device=device,
     )
 
     print(f"Revised response: {revision}")
@@ -97,10 +97,10 @@ def demo_preference_comparison():
 
     # Setup
     print("\n[1] Loading model and constitutional framework...")
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    model = AutoModelForCausalLM.from_pretrained('gpt2')
-    tokenizer = AutoTokenizer.from_pretrained('gpt2')
+    model = AutoModelForCausalLM.from_pretrained("gpt2")
+    tokenizer = AutoTokenizer.from_pretrained("gpt2")
     model = model.to(device)
 
     if tokenizer.pad_token is None:
@@ -109,20 +109,22 @@ def demo_preference_comparison():
     framework = setup_default_framework()
     principles = [p.description for p in framework.principles]
 
-    print(f"✓ Model loaded")
+    print("✓ Model loaded")
 
     # Example prompt and responses
     prompt = "Explain climate change."
-    response_a = "Climate change is when the weather gets different and sometimes bad things happen."
+    response_a = (
+        "Climate change is when the weather gets different and sometimes bad things happen."
+    )
     response_b = "Climate change refers to long-term shifts in global temperatures and weather patterns, primarily driven by human activities like burning fossil fuels, which increase greenhouse gas emissions."
 
-    print(f"\n[2] Comparing two responses...")
+    print("\n[2] Comparing two responses...")
     print(f"Prompt: {prompt}")
     print(f"\nResponse A: {response_a}")
     print(f"\nResponse B: {response_b}")
 
     # Generate comparison
-    print(f"\n[3] AI evaluates which response better follows constitutional principles...")
+    print("\n[3] AI evaluates which response better follows constitutional principles...")
 
     comparison = generate_comparison(
         prompt=prompt,
@@ -131,7 +133,7 @@ def demo_preference_comparison():
         principles=principles,
         model=model,
         tokenizer=tokenizer,
-        device=device
+        device=device,
     )
 
     print(f"Preferred: Response {comparison['preferred']}")
@@ -150,10 +152,10 @@ def demo_reward_model():
 
     # Setup
     print("\n[1] Creating reward model...")
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    base_model = AutoModelForCausalLM.from_pretrained('gpt2')
-    tokenizer = AutoTokenizer.from_pretrained('gpt2')
+    base_model = AutoModelForCausalLM.from_pretrained("gpt2")
+    tokenizer = AutoTokenizer.from_pretrained("gpt2")
     base_model = base_model.to(device)
 
     if tokenizer.pad_token is None:
@@ -164,34 +166,28 @@ def demo_reward_model():
     reward_model = reward_model.to(device)
     reward_model.eval()
 
-    print(f"✓ Reward model created")
+    print("✓ Reward model created")
 
     # Example responses to score
     prompt = "What is machine learning?"
     good_response = "Machine learning is a subset of AI where algorithms learn patterns from data to make predictions or decisions without explicit programming."
     bad_response = "Machine learning is computer stuff."
 
-    print(f"\n[2] Scoring responses with reward model...")
+    print("\n[2] Scoring responses with reward model...")
     print(f"Prompt: {prompt}")
     print(f"\nGood response: {good_response}")
     print(f"Bad response: {bad_response}")
 
     with torch.no_grad():
         good_reward = reward_model.get_rewards(
-            prompts=[prompt],
-            responses=[good_response],
-            tokenizer=tokenizer,
-            device=device
+            prompts=[prompt], responses=[good_response], tokenizer=tokenizer, device=device
         )
 
         bad_reward = reward_model.get_rewards(
-            prompts=[prompt],
-            responses=[bad_response],
-            tokenizer=tokenizer,
-            device=device
+            prompts=[prompt], responses=[bad_response], tokenizer=tokenizer, device=device
         )
 
-    print(f"\n[3] Reward scores:")
+    print("\n[3] Reward scores:")
     print(f"Good response reward: {good_reward.item():.4f}")
     print(f"Bad response reward: {bad_reward.item():.4f}")
 
@@ -276,5 +272,5 @@ def main():
     print("=" * 80 + "\n")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

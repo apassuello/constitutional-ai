@@ -14,8 +14,7 @@ SPECIAL NOTES: Foundation for Constitutional AI approach inspired by Anthropic's
 import inspect
 import logging
 from collections.abc import Callable
-from typing import Any, Dict, List
-
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +22,7 @@ logger = logging.getLogger(__name__)
 try:
     import torch
 except ImportError:
-    torch = None  # Allow framework to work without torch for testing
+    torch = None  # type: ignore[assignment]  # Allow framework to work without torch for testing
 
 
 class ConstitutionalPrinciple:
@@ -39,7 +38,7 @@ class ConstitutionalPrinciple:
         self,
         name: str,
         description: str,
-        evaluation_fn: Callable[[str], Dict[str, Any]],
+        evaluation_fn: Callable[[str], dict[str, Any]],
         weight: float = 1.0,
         enabled: bool = True,
     ):
@@ -66,7 +65,7 @@ class ConstitutionalPrinciple:
         tokenizer: Any | None = None,
         device: Any | None = None,
         logger=None,  # type: ignore
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Evaluate text against this principle.
 
@@ -99,12 +98,12 @@ class ConstitutionalPrinciple:
         # Call evaluation function with appropriate parameters
         if "logger" in params:
             # Function supports content logging
-            result = self.evaluation_fn(
+            result = self.evaluation_fn(  # type: ignore[call-arg]
                 text, model=model, tokenizer=tokenizer, device=device, logger=logger
             )
         elif "model" in params or "tokenizer" in params or "device" in params:
             # New-style function that accepts model parameters (without logger)
-            result = self.evaluation_fn(text, model=model, tokenizer=tokenizer, device=device)
+            result = self.evaluation_fn(text, model=model, tokenizer=tokenizer, device=device)  # type: ignore[call-arg]
         else:
             # Old-style function that only accepts text (backward compatibility)
             result = self.evaluation_fn(text)
@@ -163,13 +162,13 @@ class ConstitutionalFramework:
         else:
             self.device = None
 
-        self.principles: Dict[str, ConstitutionalPrinciple] = {}
-        self.evaluation_history: List[Dict[str, Any]] = []
+        self.principles: dict[str, ConstitutionalPrinciple] = {}
+        self.evaluation_history: list[dict[str, Any]] = []
         self._model_name: str | None = None  # Track model name for display
 
         # HuggingFace API configuration
         self._use_hf_api = use_hf_api
-        self._hf_api_evaluator = None
+        self._hf_api_evaluator: Any = None  # HuggingFaceAPIEvaluator | None
         self._hf_api_token = hf_api_token
 
         if use_hf_api:
@@ -219,7 +218,8 @@ class ConstitutionalFramework:
         if self.model is None:
             return "Regex (no model)"
         if hasattr(self.model, "config") and hasattr(self.model.config, "name_or_path"):
-            return self.model.config.name_or_path.split("/")[-1]
+            model_name: str = self.model.config.name_or_path.split("/")[-1]
+            return model_name
         return "Unknown Model"
 
     def use_regex_only(self) -> None:
@@ -326,7 +326,7 @@ class ConstitutionalFramework:
         if name in self.principles:
             self.principles[name].enabled = False
 
-    def evaluate_text(self, text: str, track_history: bool = False, logger=None) -> Dict[str, Any]:  # type: ignore
+    def evaluate_text(self, text: str, track_history: bool = False, logger=None) -> dict[str, Any]:  # type: ignore
         """
         Evaluate text against all constitutional principles.
 
@@ -396,7 +396,7 @@ class ConstitutionalFramework:
 
     def _evaluate_with_hf_api(
         self, text: str, track_history: bool = False, logger=None  # type: ignore
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Evaluate text using HuggingFace API.
 
@@ -461,7 +461,7 @@ class ConstitutionalFramework:
 
         return evaluation
 
-    def batch_evaluate(self, texts: List[str]) -> List[Dict[str, Any]]:
+    def batch_evaluate(self, texts: list[str]) -> list[dict[str, Any]]:
         """
         Evaluate multiple texts.
 
@@ -473,7 +473,7 @@ class ConstitutionalFramework:
         """
         return [self.evaluate_text(text) for text in texts]
 
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """
         Get statistics from evaluation history.
 
@@ -509,7 +509,7 @@ class ConstitutionalFramework:
         """Clear evaluation history."""
         self.evaluation_history = []
 
-    def get_active_principles(self) -> List[str]:
+    def get_active_principles(self) -> list[str]:
         """Get list of currently enabled principle names."""
         return [name for name, principle in self.principles.items() if principle.enabled]
 
