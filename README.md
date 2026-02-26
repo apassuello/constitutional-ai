@@ -181,7 +181,7 @@ constitutional-ai/
 │   ├── ppo_trainer.py      # Phase 2 PPO trainer
 │   ├── config.py           # Configuration
 │   └── model_utils.py      # Model utilities
-├── tests/                  # Test suite (91% passing)
+├── tests/                  # Test suite
 ├── examples/               # Usage examples
 ├── demos/                  # Interactive demos
 └── docs/                   # Documentation (in progress)
@@ -217,8 +217,6 @@ Opens a web interface at `http://localhost:7860` where you can:
 
 ## 🧪 Testing
 
-Current test status: **197/216 tests passing (91%)**
-
 ```bash
 # Run all tests
 pytest tests/ -v
@@ -229,11 +227,6 @@ pytest tests/ --cov=constitutional_ai --cov-report=term-missing
 # Run specific test module
 pytest tests/test_framework.py -v
 ```
-
-**Known Issues:**
-- Some AI evaluation tests require mock configuration updates
-- Coverage at 45% (ML code inherently harder to test)
-- See `TEST_REPORT.md` for detailed status
 
 ---
 
@@ -258,31 +251,6 @@ framework = setup_default_framework(model=model, tokenizer=tokenizer)
 
 **3. Hybrid mode (recommended)**
 Uses regex as safety net, AI for nuanced evaluation.
-
----
-
-## 📊 Current Status
-
-### ✅ Working
-- All core imports and modules
-- Framework principle management
-- Regex-based evaluation
-- Critique-revision pipeline
-- Reward model training
-- PPO trainer
-- Package builds successfully
-
-### ⚠️ In Progress
-- AI-based evaluation (some tests need configuration)
-- Comprehensive documentation
-- Additional examples
-- Performance benchmarks
-
-### ❌ Not Available
-- PyPI package (install from source only)
-- Pre-trained reward models
-- Production deployment guides
-- Full API documentation
 
 ---
 
@@ -322,16 +290,6 @@ This implementation is inspired by:
 - `tests/` - Test suite showing usage patterns
 - `FIXES_APPLIED.md` - Recent code improvements
 - `TEST_REPORT.md` - Detailed test status
-
----
-
-## ⚠️ Important Disclaimers
-
-1. **Experimental Code:** This is research/educational code, not production-ready
-2. **No Warranties:** Use at your own risk, see LICENSE for details
-3. **Not Affiliated:** Independent implementation, not officially from Anthropic
-4. **Active Development:** APIs and behavior may change
-5. **Testing Required:** Thoroughly test before any serious use
 
 ---
 
