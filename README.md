@@ -2,9 +2,6 @@
 
 A research implementation of **Constitutional AI** methodology - a technique for training safer language models using principle-based evaluation and AI feedback.
 
-> ⚠️ **Status: Experimental Research Code**
-> This is a reference implementation extracted from a research project. Use for learning, experimentation, and research purposes only. Not recommended for production use.
-
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![Tests](https://github.com/apassuello/constitutional-ai/workflows/Tests/badge.svg)](https://github.com/apassuello/constitutional-ai/actions/workflows/ci.yml)
@@ -181,7 +178,7 @@ constitutional-ai/
 │   ├── ppo_trainer.py      # Phase 2 PPO trainer
 │   ├── config.py           # Configuration
 │   └── model_utils.py      # Model utilities
-├── tests/                  # Test suite (91% passing)
+├── tests/                  # Test suite
 ├── examples/               # Usage examples
 ├── demos/                  # Interactive demos
 └── docs/                   # Documentation (in progress)
@@ -273,17 +270,11 @@ Uses regex as safety net, AI for nuanced evaluation.
 - Package builds successfully
 
 ### ⚠️ In Progress
-- AI-based evaluation (some tests need configuration)
+- AI-based evaluation 
 - Comprehensive documentation
 - Additional examples
 - Performance benchmarks
-
-### ❌ Not Available
-- PyPI package (install from source only)
-- Pre-trained reward models
-- Production deployment guides
-- Full API documentation
-
+- 
 ---
 
 ## 🤝 Contributing
@@ -322,16 +313,6 @@ This implementation is inspired by:
 - `tests/` - Test suite showing usage patterns
 - `FIXES_APPLIED.md` - Recent code improvements
 - `TEST_REPORT.md` - Detailed test status
-
----
-
-## ⚠️ Important Disclaimers
-
-1. **Experimental Code:** This is research/educational code, not production-ready
-2. **No Warranties:** Use at your own risk, see LICENSE for details
-3. **Not Affiliated:** Independent implementation, not officially from Anthropic
-4. **Active Development:** APIs and behavior may change
-5. **Testing Required:** Thoroughly test before any serious use
 
 ---
 
